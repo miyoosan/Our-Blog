@@ -25,3 +25,41 @@
  9 git diff <file>
  查看指定文件具体修改了什么内容
  
+ 10 git log
+ 查看版本历史
+ 
+ 11 git log --pretty=oneline
+ 查看版本历史，每个版本只以一行显示
+ 
+ 12 git reset --hard HEAD^
+ 回退到上一个版本
+ 
+ 13 git reset --hard HEAD^^
+ 回退到上上个版本
+ 
+ 14 git reset --hard HEAD~100
+ 回退到第前一百个版本
+ 
+ 15 cat <file>
+ 查看某文件的内容
+ 
+ 16 git reset --hard xxxxxxx
+ xx为7位版本号id，即版本序列号前七位（可以更多或更少位），只要命令行窗口还没关，回退的xx版本还可以找回来
+ 
+ 17 git reset --hard commit_id
+ id为版本号，这个命令可以让我们自由穿梭去指定的版本，包括过去与未来
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
