@@ -79,6 +79,7 @@
  在确认删除之前，可以取消删除
  
  //以下是创建与连接远程仓库的过程（以\\结尾）
+ 
  27 ssh-keygen -t rsa -C "youremail@example.com"
  创建SSH KEY，在用户主目录下可以看到有两个文件，一个是id_rsa私钥，一个是id_rsa.pub公钥，敲完命令，一路回车即可
  
@@ -99,7 +100,9 @@
  \\ 过程结束
  
  33 git clone git@github.com:yourGitHubName/factory.git
- 克隆一个远程仓库到本地，还支持https://github.com/yourGitHubName/factory.git这样的地址。实际上，Git支持多种协议，默认是SSH，还可以使用https。不过https速度比较慢，而且每次需要输入口令，一般只在限定环境下使用
+ 克隆一个远程仓库到本地，还支持https://github.com/yourGitHubName/factory.git
+ 这样的地址。实际上，Git支持多种协议，默认是SSH，还可以使用https。
+ 不过https速度比较慢，而且每次需要输入口令，一般只在限定环境下使用
  
  34 git checkout -b dev
  创建dev分支，并切换到dev分支，相当于以下命令git branch dev 和 git checkout dev 的结合
@@ -199,10 +202,12 @@
  64 git push orign :refs/tags/v0.9
  如果标签已经推送到远程，要删除，先在本地删除，即61，然后再使用该命令进行删除
  
+ 65 .gitignore 文件本身要放到版本库里，要忽略某些文件时，就在里面编写相应规则，具体参考https://github.com/github/gitignore
  
- 
- 
- 
+ 66 git config --global alias.goto checkout
+ 该命令是配置别名，--global参数表示别名应用于该用户，如果缺省这个参数，别名将只用于该仓库
+ 命令意思是，给checkout取个别名 goto。别名最好是能快速敲出来，并易于自己理解的。
+ 配置文件全局状态下，在用户主目录的.gitconfig里，否则就在仓库的.git/config里。可以通过cat <file>命令查看
  
  
  
