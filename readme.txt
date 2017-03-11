@@ -119,6 +119,11 @@
  38 git branch -d dev
  删除dev分支。因为创建、合并、删除分支非常快，所以通常鼓励在分支完成任务，然后合并，删除分支，过程很安全。Git鼓励大量使用分支
  
+ 39 git log --graph --pretty=oneline --abbrev-commit
+ 该命令可以看到分支合并的情况，并以图表形式显示
+ 
+ 40 git merge --no-ff -m "merge with no fast forward pattern" dev
+ 合并dev分支到当前分支，禁用ff模式，git会在合并时生成一个新的commit，这样，可以从分支历史上看出分支信息，也就是保留了合并的历史
  
  
  
