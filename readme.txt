@@ -122,8 +122,8 @@
  39 git log --graph --pretty=oneline --abbrev-commit
  该命令可以看到分支合并的情况，并以图表形式显示
  
- 40 git merge --no-ff -m "merge with no fast forward pattern"
- 禁用ff模式，git会在合并时生成一个新的commit，这样，可以从分支历史上看出分支信息，也就是保留了合并的历史。
+ 40 git merge --no-ff -m "merge with no fast forward pattern" dev
+ 合并dev分支到当前分支，禁用ff模式，git会在合并时生成一个新的commit，这样，可以从分支历史上看出分支信息，也就是保留了合并的历史
  
  
  
