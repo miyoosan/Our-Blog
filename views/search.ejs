@@ -1,0 +1,17 @@
+<%- include header %>
+<div class="section">
+	<div class="container">
+		<ul class="archive list-unstyled">
+			<% var lastYear = 0 %>
+			<% posts.forEach(function (post, index) { %>
+			<% if (lastYear != post.time.year) { %>
+			<li><h3><%= post.time.year %></h3></li>
+			<% lastYear=post.time.year } %>
+			<li><time><%= post.time.day %></time></li>
+			<li><a href="/p/<%= post._id %>"><%= post.title %></a></li>
+			<% }) %>
+		</ul>
+		<h2>标题关键字[ <%= title %> ]搜索结果：共搜到 <%= posts.length %> 篇</h2>
+	</div>
+</div>
+<%- include footer %> 

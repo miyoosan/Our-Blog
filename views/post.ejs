@@ -1,0 +1,27 @@
+<%- include header %>
+<div class="section">
+<div class="container">
+	<div class="row">
+		<div class="col-lg-10">
+			<form class="form-group-lg post" method="post">
+				<strong>标题：</strong><br />
+				<input class="form-control" type="text" name="title" /><br />
+				<strong>分类：</strong><br />
+				<input class="form-control" list="tags" name="tags">
+				<datalist id="tags">
+					<option value="技术随笔">
+					<option value="生活感悟">
+					<option value="学习笔记">
+				    <option value="前端专题">
+				</datalist>
+				<br />
+				<strong>正文：</strong><br />
+				<textarea class="form-control" name="post" rows="20"></textarea><br />
+				<input class="btn btn-default btn-block" type="submit" value="发表" />
+			
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+<%- include footer %>

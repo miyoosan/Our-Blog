@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- <meta charset="UTF-8" /> -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Fairy Blog</title>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <!-- <link rel="stylesheet" href="/stylesheets/blog.css"> -->
+  <script charset="utf-8" src="/KindEditor/kindeditor-all-min.js"></script>
+  <script charset="utf-8" src="/KindEditor/lang/zh-CN.js"></script>
+  <script>
+  var editor;
+  KindEditor.ready(function(K) {
+    editor = K.create('textarea', {
+      allowImageUpload : false,
+      items : [
+      'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic',
+      'underline', 'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright',
+      'insertorderedlist', 'insertunorderedlist', '|', 'emoticons', 'image', 'link']
+    });
+  });
+  </script>
+</head>
+<body>
+  <div class="header">
+    <!-- 响应式导航栏 -->
+    <nav class="container navbar navbar-default navbar-fixed-top" id="navbar-mine" role="navigation">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="navbar-header">
+              <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#default-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <!-- <a class="navbar-brand" href="#">Fairyoop</a> -->
+              <span class="navbar-brand"><a href="/"><img src="../images/logos.png" /></a></span>
+            </div>
+          </div>
+          <div class="col-sm-3 col-md-4 col-lg-3">
+            <div class="collapse navbar-collapse" id="default-navbar-collapse">
+              <ul class="nav navbar-nav navbar-left">
+                <li><a href="/"><span class="glyphicon glyphicon-home hidden-sm"></span> 首页</a></li>
+                <li><a href="/archive"><span class="glyphicon glyphicon-book hidden-sm"></span> 博文</a></li>
+                <li><a href="/post"><span class="glyphicon glyphicon-leaf hidden-sm"></span> 写作</a></li>
+<!--               <li class="dropdown visible-xs-inline">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  更多 <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">设置</a></li>
+                  <li><a href="#">关于</a></li>
+                  <li class="divider"></li>
+                  <li><a href="/links">友情链接</a></li>
+                </ul>
+              </li> -->
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-4 col-md-3 col-lg-4">
+          <form action="/search" method="GET" class="navbar-form hidden-xs pull-right" role="search">
+            <button class="btn btn-default pull-right">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+            <div class="form-group pull-right">
+              <span class="sr-only">搜索</span>
+              <input class="form-control" type="text" name="keyword" placeholder="搜索"  value />
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-3 col-md-3 col-lg-3 hidden-xs">
+          <ul class="nav navbar-nav navbar-right">
+            <% if (user) { %>
+            <li><a href="u/<%= user.name %>"><span class="glyphicon glyphicon-user"></span> <%= user.name %></a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> 退出</a></li>
+            <% } else { %> 
+            <li><a href="/reg"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="notice-box container">
+  <% if (success) { %>
+  <div class="success"><%= success %></div>
+  <% } %>
+  <% if (error) { %>
+  <div class="error"><%= error %></div>
+  <% } %>
+  <div class="bulletin-board visible-homepage hidden-xs"></div>
+  <div class="page-index visible-not-homepage hidden-xs"></div>
+</div>

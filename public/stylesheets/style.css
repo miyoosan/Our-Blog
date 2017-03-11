@@ -1,0 +1,310 @@
+/* ###################################### */
+/* ###################################### */
+/* ###################################### */
+/* #            自定义CSS样式           # */
+/* ###################################### */
+/* ###################################### */
+/* ###################################### */
+
+/* ######################## */
+/* #      客户端格式化    # */
+/* ######################## */
+*, :after, :before {
+  box-sizing: border-box;
+}
+body {
+  display: block;
+  background-color: #fff;
+  margin: 0;
+}
+.ke-container.ke-container-default {
+  width:100%!important;
+  height:auto!important;
+}
+/* ######################## */
+/* #    头部样式.header   # */
+/* ######################## */
+.header a {
+  text-decoration: none;
+}
+.header>.container {
+  width: 100%;
+}
+.header .container li a {
+  line-height: 30px;
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
+}
+.header .row>div+div {
+  padding-left: 0;
+  padding-right: 0;
+}
+.header .row:last-child {
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .header .row:last-child {
+    padding-right: 20px;
+  }
+}
+.header .navbar-default {
+  background-color: #fcfcfc;
+  height: 70px;
+  box-shadow: 1px 1px 5px #eee;
+}
+.header .navbar-brand {
+  height: 60px;
+}
+.header .navbar-brand img {
+  width: 90%;
+}
+.header .btn-default {
+  background-color: #f8f8f8;
+  color: #666;
+}
+@media (max-width: 425px) {
+  .header .navbar-brand img {
+    width: 70%;
+  }
+  .header .navbar-brand {
+    width: 180px;
+    padding-top: 13px;
+  }
+  .header .navbar-default {
+    height: 50px;
+  }
+  .header .navbar-collapse {
+    background-color: #fcfcfc;
+  }
+}
+@media (min-width: 768px) and (max-width: 992px) {
+  .header .navbar-brand img {
+    width: 120%;
+  }
+  .header .navbar-brand {
+    padding-top: 20px;
+  }
+  .header .navbar-nav>li>a {
+    padding-right: 0;
+  }
+}
+.header .navbar-form {
+  margin-top: 12px;
+  margin-bottom: 14px;
+}
+.header .form-control {
+   background-color: #fafafa;
+}
+.header .form-control:focus {
+  border-color: #fafafa;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(175, 205, 225, .075), 0 0 8px rgba(85, 72, 44, .6);
+  box-shadow: inset 0 1px 1px rgba(175, 205, 225, .075), 0 0 8px rgba(85, 72, 44, .6)
+}
+@media (min-width: 768px) {
+  .header .form-group {
+    width: 65%;
+  }
+  .header .form-control {
+    width: 97%;
+    font-size: 10px;
+  } 
+}
+@media (min-width: 992px) {
+  .header .form-group {
+    width: 75%;
+  }
+  .header .form-control {
+    width: 97%;
+    font-size: 12px;
+  } 
+}
+
+/* ######################## */
+/* #   内容样式.section   # */
+/* ######################## */
+.section {
+  padding-top: 70px;
+}
+@media (max-width: 425px) {
+  .section {
+    padding-top: 50px;
+    /*padding-bottom: 30px;*/
+  }
+}
+.section h2 {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.section .article  {
+  font-size: 16px;
+}
+.section .article .content-info {
+  color: #999999;
+  padding-top: 15px;
+}
+.section .article .content-info a {
+  color: #000;
+  border-radius: 3px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.section .article .content-info a.readmore {
+  color: #999;
+}
+.section .article .content-info a:hover {
+  text-decoration: none;
+  color: #00aaff;
+  -webkit-transition: color .2s linear;
+}
+.section .article .content-info p {
+  font-size: 12px;
+}
+.section .article .content-box {
+  font-size: 1em !important;
+  position: relative;
+  max-height: 238px;
+  padding-bottom: 0px;
+  word-wrap: nowrap;
+  overflow: hidden;
+}
+.section .post {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.section hr {
+  border: 1px solid #f8f8f8;
+}
+.section .archive {
+  line-height: 28px;
+}
+.section .archive h3 {
+  margin: 0.5em 0;
+}
+.section .archive time {
+  float: left;
+  font-size: 14px;
+  color: #999999;
+  margin-right: 1.2em;
+}
+
+.section .sidebar {
+  padding-top: 15px;
+  line-height: 34px;
+}
+
+.section .login-out {
+  margin: 20% auto;
+  width: 350px;
+  padding: 20px;
+  border: 2px solid #ddd;
+  box-shadow: 1px 1px 20px #eee;
+}
+@media (max-width: 425px) {
+  .section .login-out {
+    width: auto;
+    margin: 50% auto;
+  }
+}
+.section .login-out div {
+  font-weight: bold;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.section .user-info {
+  padding-top: 15px;
+  background-color: #fcfcfc;
+}
+
+/* ######################## */
+/* #   分页样式.paging    # */
+/* ######################## */
+.paging .page {
+  background-color: #fcfcfc;
+  padding: 4px 26px;
+  border: 1px solid #ddd;
+  border-radius: 5%;
+  color: #000;
+}
+
+.paging .disabled {
+  color: #888;
+  cursor: pointer;
+}
+.paging .page:hover {
+  text-decoration: none;
+  color: #000;
+  background-color: #5bc0de;
+  border-color: #46b8da;
+}
+
+/* ######################## */
+/* #   top样式.up-to-top  # */
+/* ######################## */
+.up-to-top {
+  display: block;
+  position: fixed;
+  right: 40px;
+  bottom: 100px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #fcfcfc;
+}
+.up-to-top>a {
+  display: block;
+}
+.up-to-top .arrow-up {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  border-bottom: 30px solid #c2c2c2;
+  opacity: 0.8;
+}
+.up-to-top .topbar {
+  display: block;
+  font-size: 18px;
+  line-height: 74px;
+  color: #fff;
+  background-color: #c2c2c2;
+  border-top: 1px solid #fff;
+  opacity: 0.8;
+}
+.up-to-top:hover,
+.up-to-top:focus,
+.up-to-top .topbar:focus,
+.up-to-top .topbar:hover {
+  text-decoration: none;
+}
+/*返回按钮的样式*/
+/*.back {
+  padding-top: 10px;
+  padding-bottom: 15px;
+}*/
+/* ######################## */
+/* #   底部样式.footer    # */
+/* ######################## */
+.footer {
+  background-color: #fcfcfc;
+  padding-top: 25px;
+  padding-bottom: 10px;
+  border-top: 2px solid #f8f8f8;
+  color: #40361f;
+}
+.footer a {
+  color: #40361f;
+}
+
+.footer .navbar-fixed-bottom {
+  padding-top: 10px;
+  background-color: #fcfcfc;
+}
+.footer .navbar-fixed-bottom a {
+  padding-left: 8px;
+  padding-right: 8px;
+}

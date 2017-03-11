@@ -1,0 +1,17 @@
+<%- include header %>
+<div class="section">
+	<div class="container">
+		<ul class="archive list-unstyled">
+			<% var lastYear = 0 %>
+			<% posts.forEach(function (post, index) { %>
+			<% if (lastYear != post.time.year) { %>
+			<li><h3><%= post.time.year %></h3></li>
+			<% lastYear=post.time.year } %>
+			<li><time><%= post.time.minute %></time></li>
+			<li>作者：<a href="/u/<%= post.name %>"><%= post.name %></a> | 文章标题：<a href="/p/<%= post._id %>"><%= post.title %></a></li>
+			<% }) %>
+		</ul>
+		<p>[统计] 本站收录博文共 <%= posts.length %> 篇</p>
+	</div>
+</div>
+<%- include footer %> 

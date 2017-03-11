@@ -1,0 +1,62 @@
+<%- include header %>
+<div class="section">
+	<div class="user-info text-center">
+		<h2>个人主页</h2>
+      	<ul class="list-unstyled list-inline">
+      		<li>当前用户：<%= user.name %></li>
+      		<li>已发表文章：<%= posts.length %> 篇</li>
+      		<li><a class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" href="/logout">退出登录</a></li>
+      	</ul>
+      	<hr/>
+      </div> 
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+        <% posts.forEach(function (post, index) { %>
+        <div class="article">
+          <div class="content-info">
+            <p>
+               <!-- <a href="u/<%= post.name %>"><img src="<%= post.head %>" class="r_head" /></a> -->
+              <a href="u/<%= post.name %>"><%= post.name %></a>
+              &nbsp;&nbsp;发表于 <%= post.time.minute %>
+            </p>
+            <h2>
+              <a href="p/<%= post._id %>"><%= post.title %></a>
+            </h2>
+          </div>
+          <div class="content-thumbnail"></div>
+          <div class="content-box">
+            <p><%- post.post %></p>
+          </div>
+          <!-- <button class="btn btn-primary read-more">Readmore</button> -->
+          <div class="content-info">
+            <p>
+              <% post.tags.forEach(function (tag, index) { %>
+              <% if (tag) { %>
+              <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
+              <% } %>
+              <% }) %>
+              &nbsp;
+              <span class="glyphicon glyphicon-eye-open"></span> <%= post.pv %>&nbsp;
+              <span class="glyphicon glyphicon-comment"></span> <%= post.comments.length %>&nbsp;
+              <span class="glyphicon glyphicon-share-alt"></span>
+              <% if (post.reprint_info.reprint_to_id) { %>
+              <%= post.reprint_info.reprint_to_id.length %>
+              <% } else { %>
+              <%= 0 %>
+              <% } %>
+            </p>
+          </div>
+          <hr/>
+        </div>
+        <% }); %> 
+        <%- include paging %>
+      </div>
+      <div class="col-sm-2 col-md-4 col-lg-4 hidden-xs">
+        <%- include sidebar %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include footer %>

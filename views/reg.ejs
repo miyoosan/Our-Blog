@@ -1,0 +1,28 @@
+<%- include header %>
+<div class="section">
+	<div class="container">
+		<div class="login-out text-center">
+			<h2><%= title %></h2>
+			<form method="post">
+				<div>
+					<span>用户昵称：</span>
+					<input type="text" name="name" /><br />
+				</div>
+				<div>
+					<span>登录密码：</span>
+					<input type="password" name="password" /><br />
+				</div>
+				<div>
+					<span>确认密码：</span>
+					<input type="password" name="password-repeat" /><br />
+				</div>
+				<div>
+				    <span>电子邮箱：</span>
+				    <input type="email" name="email" /><br />
+			    </div>
+			    <input class="btn btn-primary btn-lg" type="submit" value="注册" />
+		    </form>
+	    </div>
+    </div>
+</div>
+<%- include footer %>

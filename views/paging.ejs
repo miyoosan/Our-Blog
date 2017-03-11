@@ -1,0 +1,20 @@
+<div class="paging">
+	<!-- AJAX缓存请求下一页内容，功能有待完善 -->
+<!-- 	<div class="hidden-sm hidden-md hidden-lg">
+		<div id="test1"></div>
+		<button class="btn btn-primary btn-block" id="hss1" type="button">查看更多</button>
+	</div> -->
+	<ul class="list-unstyled list-inline">
+		<% if (!isFirstPage) { %>
+		<li><a class="page" title="上一页" href="?p=<%= page-1 %>">Prev</a></li>
+		<% } else { %>
+		<li><a class="page disabled" href="javascript:0;">Prev</a></li>
+		<% } %>
+		<li>第 <%= page %> / <%= lastPage %> 页</li>
+		<% if (!isLastPage) { %>
+	    <li><a class="page" title="下一页" href="?p=<%= page+1 %>">Next</a></li>
+	<% } else { %>
+	    <li><a class="page disabled" href="javascript:0;">Next</a></li>
+	<% } %>
+	</ul>
+</div>

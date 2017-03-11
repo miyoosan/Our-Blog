@@ -1,0 +1,105 @@
+    <div class="hide" id="up-to-top">
+    <a class="up-to-top text-center hidden-xs"  href="#">
+    	<span class="arrow-up">
+    	</span>
+        <span class="topbar">TOP</span>
+    </a>
+    </div>
+    <!-- 返回上一页按钮，功能有待改善，在移动端应该固定覆盖屏幕顶部区域，并以符号<表示 -->
+    <div class="container back">
+    	<a class="btn btn-primary btn-block hidden-sm hidden-md hidden-lg" href="#" onclick="javascript:history.back(-1);">返回</a>
+    </div>
+	<div class="footer" id="footer">
+		<div class="container hidden-xs text-center">
+			<!-- <button class="btn btn-primary" id="change" type="button">夜间模式</button> -->
+			<ul class="list-unstyled list-inline">
+				<li><a href="javascript:0;">关于本站</a></li>
+				<li><a href="javascript:0;">联系我们</a></li>
+				<li><a href="javascript:0;">帮助中心</a></li>
+				<li><a href="https://www.freecodecamp.cn/home" target="_blank">FreeCodeCamp</a></li>
+				<li><a href="https://github.com/miyoosan" target="_blank">GitHub</a></li>
+				<li><a href="http://ourjs.com/" target="_blank">OurJs</a></li>
+				<li><a href="http://www.cnblogs.com/miyosan/" target="_blank">博客园</a></li>
+				<li><a href="http://wiki.jikexueyuan.com/" target="_blank">极客学院</a></li>
+				<li><a href="http://wangchloe.vip/" target="_blank">前端大厨</a></li>
+			</ul>
+			<p>Copyright © Qianwu Miyoosan 2017. All Rights Reserved</p>
+		</div>
+		<div class="navbar-fixed-bottom hidden-sm hidden-md hidden-lg">
+			<ul class="list-inline text-center">
+				<li><a href="/"><span class="glyphicon glyphicon-eye-open"></span> 发现</a></li>
+				<li><a href="/archive"><span class="glyphicon glyphicon-book"></span> 博文</a></li>
+				<li><a href="/post"><span class="glyphicon glyphicon-leaf"></span> 写作</a></li>
+				<% if (user) { %>
+				  <li><a href="u/<%= user.name %>"><span class="glyphicon glyphicon-user"></span> 帐号</a></li>
+				<% } else { %>
+				  <li><a href="/login"><span class="glyphicon glyphicon-user"></span> 帐号</a></li>
+				<% } %>
+			</ul>
+		</div>
+	</div>
+<script>
+window.onload = function () {
+	// 底层内容固定在页面底部
+	if (document.body.offsetHeight < window.innerHeight) {
+		document.getElementById("footer").className = "footer navbar-fixed-bottom";
+	} else {
+		document.getElementById("footer").className = "footer";
+	}
+	// 返回顶部TOP的实现
+	window.onscroll = function () {
+		if (window.pageYOffset == 0) {
+			document.getElementById("up-to-top").className = "hide";
+		} else {
+			document.getElementById("up-to-top").className = "show";
+		}
+	};
+	// AJAX请求
+	function myAjax () {
+		// alert("失败");
+		var xmlhttp;
+		if (window.XMLHttpRequest) {
+			// IE7+, Firefox, Chrome, Opera, Safari 
+			xmlhttp = new XMLHttpRequest();
+		} else {
+			// IE5, IE6
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		
+		xmlhttp.open("GET", "?p=<%= page+1 %>", true);
+		xmlhttp.send();
+		xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				document.getElementById("section").innerHTML = xmlhttp.responseText;
+			}
+		};
+	}
+	var change = document.getElementById("change");
+	change.onclick = function () {
+		myAjax();
+	};
+	//动态加载外部CSS/JS文件
+	function loadJsOrCss (fileUrl, fileType) {
+		if (fileType == "js") {
+			var fileref = document.createElement("script");
+			fileref.setAttribute("type", "text/javascript");
+			fileref.setAttribute("src", fileUrl);
+		} else if (fileType == "css") {
+			var fileref = document.createElement("link");
+			fileref.setAttribute("rel", "stylesheets");
+			fileref.setAttribute("type", "text/css");
+			fileref.setAttribute("href", fileUrl);
+		}
+		if (typeof fileref != "undefined") {
+			document.getElementByTagName("head")[0].appendChild(fileref);
+		}
+	}
+	// loadJsOrCss("https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css", "css");
+	// loadJsOrCss("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js", "js");
+	// loadJsOrCss("https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js", "js");
+};
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+</body>
+</html>
