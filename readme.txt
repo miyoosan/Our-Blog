@@ -10,8 +10,8 @@
  4 pwd
  可以查询当前所在路径
  
- 5 git ls -ah
- 可以查看当前仓库里的文件，包括隐藏文件
+ 5 ls -ah
+ 可以查看当前文件夹里的文件，包括隐藏文件
  
  6 git add <file_1> <file_2> ...<file_n>
  添加文件到仓库，可以一次性添加多个文件
@@ -58,6 +58,23 @@
  20 git diff HEAD -- <file>
  查看该文件在工作区和版本库里面最新版本的区别
  
+ 21 git checkout -- <file> 
+ 撤销文件在工作区的修改，回到最近一次git commit 或 git add 时的状态
+ 
+ 22 git reset HEAD <file>
+ 可以把暂存区的修改撤销掉，重新放回工作区。其中，HEAD表示最新版本，可以用其他版本id取代
+ 
+ 23 rm <file>
+ 从文件夹里删除文件
+ 
+ 24 git rm <file>
+ 从版本库里删除文件
+ 
+ 25 git commit -m "decription"
+ 确认删除该文件
+ 
+ 26 git checkout -- <file>
+ 在确认删除之前，可以取消删除
  
  
  
