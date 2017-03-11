@@ -54,49 +54,6 @@ window.onload = function () {
 			document.getElementById("up-to-top").className = "show";
 		}
 	};
-	// AJAX请求
-	function myAjax () {
-		// alert("失败");
-		var xmlhttp;
-		if (window.XMLHttpRequest) {
-			// IE7+, Firefox, Chrome, Opera, Safari 
-			xmlhttp = new XMLHttpRequest();
-		} else {
-			// IE5, IE6
-			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		}
-		
-		xmlhttp.open("GET", "?p=<%= page+1 %>", true);
-		xmlhttp.send();
-		xmlhttp.onreadystatechange = function () {
-			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-				document.getElementById("section").innerHTML = xmlhttp.responseText;
-			}
-		};
-	}
-	var change = document.getElementById("change");
-	change.onclick = function () {
-		myAjax();
-	};
-	//动态加载外部CSS/JS文件
-	function loadJsOrCss (fileUrl, fileType) {
-		if (fileType == "js") {
-			var fileref = document.createElement("script");
-			fileref.setAttribute("type", "text/javascript");
-			fileref.setAttribute("src", fileUrl);
-		} else if (fileType == "css") {
-			var fileref = document.createElement("link");
-			fileref.setAttribute("rel", "stylesheets");
-			fileref.setAttribute("type", "text/css");
-			fileref.setAttribute("href", fileUrl);
-		}
-		if (typeof fileref != "undefined") {
-			document.getElementByTagName("head")[0].appendChild(fileref);
-		}
-	}
-	// loadJsOrCss("https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css", "css");
-	// loadJsOrCss("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js", "js");
-	// loadJsOrCss("https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js", "js");
 };
 </script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
