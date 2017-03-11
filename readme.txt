@@ -125,6 +125,79 @@
  40 git merge --no-ff -m "merge with no fast forward pattern" dev
  合并dev分支到当前分支，禁用ff模式，git会在合并时生成一个新的commit，这样，可以从分支历史上看出分支信息，也就是保留了合并的历史
  
+ 41 分支策略
+ master分支应该是非常稳定的，只用来发布新版本，平时都在dev上干活，而每个人都在dev上有自己的分支，完成工作就合并到dev上
+ 等到需要发布版本时，就把dev合并到master上，如此团队合作就可以形成
+ 
+ 42 git stash
+ 手头工作没完成时，需要创建另外的分支进行工作，这时候用这个命令可以保存现有工作现场。
+ 
+ 43 git stash list
+ 查看所有保存的工作现场
+ 
+ 44 git stash apply stash@{0}
+ 恢复指定的工作现场stash@{0}，这是类似数组形式存储的，可以推论，第二个工作现场是stash@{1}
+ 
+ 45 git stash drop
+ apply恢复现场时，并没有删除stash里面的内容，这个命令可以删除
+ 
+ 46 git stash pop
+ 恢复最近一次保存的工作现场，并删除stash
+ 
+ 47 git branch -D dev
+ 强制删除dev分支。小tips：开发一个新的功能时，最好新建一个分支，如果要丢弃一个没有被合并过的分支，就使用该命令强行删除
+ 
+ 48 git合并两个分支时，有时会有冲突，cat <file> 查看冲突的文件，里面有自动标记出的不同分支的冲突内容
+ 手动修改令其内容一样，然后再合并，删除分支
+ 
+ 49 git push origin dev
+ 推送dev分支到远程仓库。一般情况下，master作为主分支，时刻要与远程同步，而dev是团队的开发分支，也需要同步
+ bug分支一般没必要推送远程，feature这样的功能分支，取决于是否需要多人协助完成
+ 
+ 50 git checkout -b dev origin/dev
+ 创建远程origin的dev分支
+ 
+ 51 git branch --set-upstream dev origin/dev
+ 设置本地dev分支与远程origin/dev的链接
+ 
+ 52 git pull
+ 抓取对应当前分支的远程分支
+ 
+ 53 多人协作开发时，如果合并有冲突，先解决冲突，参见48。解决后，提交，再push
+ 
+ 54 git remote -v
+ 查看远程库的信息
+ 注意：本地新建的分支如果不推送到远程，对其他人就是不可见的
+ 
+ 55 创建标签
+ 标签对应于commit，但commit的id是一串字符串，太难记，不好查找，所以一般给它绑定标签tag
+ 
+ 56 git tag v1.0
+ 给当前分支最后一次提交的commit添加一个新标签v1.0，即对应的版本号
+ 
+ 57 git tag
+ 查看所有标签；标签不是按时间顺序排列，而是按字母排列
+ 
+ 58 git tag v0.5 id
+ 给指定的commit id添加标签v0.5。如果忘了id，可以先git log查找id。
+ 
+ 59 git show v0.5
+ 查看标签v0.5的详细信息
+ 
+ 60 git tag -a v0.6 -m "version0.6 released" id
+ 给指定的id添加标签，-a指定标签名，-m指定说明文字。还可以通过-s用私钥签名一个标签，参考廖雪峰教程
+ 
+ 61 git tag -d v0.1
+ 删除标签v0.1。注意，标签默认存储在本地，不会自动推送到远程
+ 
+ 62 git push origin v0.1
+ 推送指定标签v0.1到远程
+ 
+ 63 git push origin --tags
+ 一次性推送全部尚未推送到远程的本地标签
+ 
+ 64 git push orign :refs/tags/v0.9
+ 如果标签已经推送到远程，要删除，先在本地删除，即61，然后再使用该命令进行删除
  
  
  
