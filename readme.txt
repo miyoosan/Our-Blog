@@ -98,6 +98,17 @@
 
  \\ 过程结束
  
+ 33 git clone git@github.com:yourGitHubName/factory.git
+ 克隆一个远程仓库到本地，还支持https://github.com/yourGitHubName/factory.git这样的地址。实际上，Git支持多种协议，默认是SSH，还可以使用https。不过https速度比较慢，而且每次需要输入口令，一般只在限定环境下使用
+ 
+ 34 git checkout -b dev
+ 创建dev分支，并切换到dev分支，相当于以下命令git branch dev 和 git checkout dev 的结合
+ 分支与主分支master的切换，是靠指针的移动，当HEAD指针移动到哪个分支上时，就表明当前是哪个分支。
+ 当有多个分支存在时，查看当前分支时，当前分支前面会有*号
+ 
+ 35 git branch
+ 查看当前分支
+ 
  
  
  
