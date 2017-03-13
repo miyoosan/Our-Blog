@@ -71,11 +71,9 @@ window.onload = function () {
 		sidebarLi[i].onclick = function () {
 			for (var i=0; i<sidebarLi.length; i++) {
 				sidebarLi[i].className = "";
-				// sidebarDiv[i].style.display = "none";
 			}
 			this.className = "active";
 			var index = this.index;
-			// sidebarDiv[this.index].style.display = "block";
 			ajax("jsons/website.json", function (xmlhttp) {
 				// if (xmlhttp.status == 404) {
 				// 	alert("数据请求失败！请重试！");
@@ -86,7 +84,7 @@ window.onload = function () {
 				for (var i=0, len=arr.length; i<len; i++) {
 					html += "<li><a href='" + arr[i].url + "' target='_blank'>" + arr[i].name + "</a></li>";
 				}
-				html += "</ul>"
+				html += "</ul>";
 				sidebarDiv.innerHTML = html;
 			});
 		};
