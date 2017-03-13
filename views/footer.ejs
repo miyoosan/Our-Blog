@@ -1,59 +1,116 @@
-    <div class="hide" id="up-to-top">
-    <a class="up-to-top text-center hidden-xs"  href="#">
-    	<span class="arrow-up">
-    	</span>
-        <span class="topbar">TOP</span>
-    </a>
-    </div>
-    <!-- 返回上一页按钮，功能有待改善，在移动端应该固定覆盖屏幕顶部区域，并以符号<表示 -->
-    <div class="container back">
-    	<a class="btn btn-primary btn-block hidden-sm hidden-md hidden-lg" href="#" onclick="javascript:history.back(-1);">返回</a>
-    </div>
-	<div class="footer" id="footer">
-		<div class="container hidden-xs text-center">
-			<!-- <button class="btn btn-primary" id="change" type="button">夜间模式</button> -->
-			<ul class="list-unstyled list-inline">
-				<li><a href="javascript:0;">关于本站</a></li>
-				<li><a href="javascript:0;">联系我们</a></li>
-				<li><a href="javascript:0;">帮助中心</a></li>
-				<li><a href="https://www.freecodecamp.cn/home" target="_blank">FreeCodeCamp</a></li>
-				<li><a href="https://github.com/miyoosan" target="_blank">GitHub</a></li>
-				<li><a href="http://ourjs.com/" target="_blank">OurJs</a></li>
-				<li><a href="http://www.cnblogs.com/miyosan/" target="_blank">博客园</a></li>
-				<li><a href="http://wiki.jikexueyuan.com/" target="_blank">极客学院</a></li>
-				<li><a href="http://wangchloe.vip/" target="_blank">前端大厨</a></li>
-			</ul>
-			<p>Copyright © Qianwu Miyoosan 2017. All Rights Reserved</p>
-		</div>
-		<div class="navbar-fixed-bottom hidden-sm hidden-md hidden-lg">
-			<ul class="list-inline text-center">
-				<li><a href="/"><span class="glyphicon glyphicon-eye-open"></span> 发现</a></li>
-				<li><a href="/archive"><span class="glyphicon glyphicon-book"></span> 博文</a></li>
-				<li><a href="/post"><span class="glyphicon glyphicon-leaf"></span> 写作</a></li>
-				<% if (user) { %>
-				  <li><a href="u/<%= user.name %>"><span class="glyphicon glyphicon-user"></span> 帐号</a></li>
-				<% } else { %>
-				  <li><a href="/login"><span class="glyphicon glyphicon-user"></span> 帐号</a></li>
-				<% } %>
-			</ul>
-		</div>
+<div class="footer" id="footer">
+	<!-- 非移动端底部区域 -->
+	<div class="container hidden-xs text-center">
+		<!-- <button class="btn btn-primary" id="change" type="button">夜间模式</button> -->
+		<ul class="list-unstyled list-inline">
+			<li><a href="javascript:0;">关于本站</a></li>
+			<li><a href="javascript:0;">联系我们</a></li>
+			<li><a href="javascript:0;">帮助中心</a></li>
+			<li><a href="https://www.freecodecamp.cn/home" target="_blank">FreeCodeCamp</a></li>
+			<li><a href="https://github.com/miyoosan" target="_blank">GitHub</a></li>
+			<li><a href="http://ourjs.com/" target="_blank">OurJs</a></li>
+			<li><a href="http://www.cnblogs.com/miyosan/" target="_blank">博客园</a></li>
+			<li><a href="http://wiki.jikexueyuan.com/" target="_blank">极客学院</a></li>
+			<li><a href="http://wangchloe.vip/" target="_blank">前端大厨</a></li>
+		</ul>
+		<p>Copyright © Qianwu Miyoosan 2017. All Rights Reserved</p>
 	</div>
+	<div class="hide" id="up-to-top">
+		<a class="up-to-top text-center hidden-xs"  href="#">
+			<span class="arrow-up">
+			</span>
+			<span class="topbar">TOP</span>
+		</a>
+	</div>
+	<!-- 返回上一页按钮，功能有待改善，在移动端应该固定覆盖屏幕顶部区域，并以符号<表示 -->
+    <!-- <div class="container back">
+	       <a class="btn btn-primary btn-block hidden-sm hidden-md hidden-lg" href="#" onclick="javascript:history.back(-1);">返回</a>
+         </div> -->
+    <!-- 移动端底部导航 -->
+	<div class="navbar-fixed-bottom hidden-sm hidden-md hidden-lg">
+		<ul class="list-inline text-center">
+			<li><a href="/"><span class="glyphicon glyphicon-eye-open"></span> 发现</a></li>
+			<li><a href="/archive"><span class="glyphicon glyphicon-book"></span> 博文</a></li>
+			<li><a href="/post"><span class="glyphicon glyphicon-leaf"></span> 写作</a></li>
+			<% if (user) { %>
+			<li><a href="/u/<%= user.name %>"><span class="glyphicon glyphicon-user"></span> 帐号</a></li>
+			<% } else { %>
+			<li><a href="/login"><span class="glyphicon glyphicon-user"></span> 帐号</a></li>
+			<% } %>
+		</ul>
+	</div>
+</div>
 <script>
 window.onload = function () {
+
 	// 底层内容固定在页面底部
+	var footer = document.getElementById("footer");
 	if (document.body.offsetHeight < window.innerHeight) {
-		document.getElementById("footer").className = "footer navbar-fixed-bottom";
+		footer.className = "footer navbar-fixed-bottom";
 	} else {
-		document.getElementById("footer").className = "footer";
+		footer.className = "footer";
 	}
+
 	// 返回顶部TOP的实现
 	window.onscroll = function () {
+		var upTop = document.getElementById("up-to-top");
 		if (window.pageYOffset == 0) {
-			document.getElementById("up-to-top").className = "hide";
+			upTop.className = "hide";
 		} else {
-			document.getElementById("up-to-top").className = "show";
+			upTop.className = "show";
 		}
 	};
+
+	// 侧边栏的导航切换与内容更新
+	var sidebar = document.getElementById("sidebar");
+	var sidebarDiv = sidebar.getElementsByTagName("div")[0];
+	var sidebarNav = document.getElementById("sidebarNav");
+	var sidebarLi = sidebarNav.getElementsByTagName("li");
+	for (var i=0; i<sidebarLi.length; i++) {
+		sidebarLi[i].index = i;
+		sidebarLi[i].onclick = function () {
+			for (var i=0; i<sidebarLi.length; i++) {
+				sidebarLi[i].className = "";
+				// sidebarDiv[i].style.display = "none";
+			}
+			this.className = "active";
+			var index = this.index;
+			// sidebarDiv[this.index].style.display = "block";
+			ajax("jsons/website.json", function (xmlhttp) {
+				// if (xmlhttp.status == 404) {
+				// 	alert("数据请求失败！请重试！");
+				// }
+				var webSite = JSON.parse(xmlhttp.responseText);
+				var arr = webSite.sites[index].site;
+				var html = "<ul class='list-unstyled'>";
+				for (var i=0, len=arr.length; i<len; i++) {
+					html += "<li><a href='" + arr[i].url + "' target='_blank'>" + arr[i].name + "</a></li>";
+				}
+				html += "</ul>"
+				sidebarDiv.innerHTML = html;
+			});
+		};
+	}
+
+	// Ajax请求
+	function ajax (url, callAjax) {
+		// 创建Ajax对象
+		if (window.XMLHttpRequest) {
+			var oAjax = new XMLHttpRequest();
+		} else {
+			var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		// 连接服务器
+		oAjax.open('GET', url, true);
+		// 发送
+		oAjax.send();
+		// 接收
+		oAjax.onreadystatechange = function () {
+			if (oAjax.readyState == 4 && oAjax.status == 200) {
+				callAjax(this);
+			}
+		};
+	}
 };
 </script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>

@@ -1,7 +1,22 @@
 <%- include header %>
+<script charset="utf-8" src="/KindEditor/kindeditor-all-min.js"></script>
+<script charset="utf-8" src="/KindEditor/lang/zh-CN.js"></script>
+<script>
+  // 富文本编辑器
+  var editor;
+  KindEditor.ready(function(K) {
+  	editor = K.create('textarea', {
+  		allowImageUpload : false,
+  		items : [
+  		'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic',
+  		'underline', 'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright',
+  		'insertorderedlist', 'insertunorderedlist', '|', 'emoticons', 'image', 'link']
+  	});
+  });
+</script>
 <div class="section">
 	<div class="container">
-		<div class="col-xs-12 col-sm-10 col-md-8 col-lg-8 article-fullpage">
+		<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
 			<div class="article">
 				<div class="content-info">
 					<h2><a><%= post.title %></a></h2>
@@ -11,7 +26,7 @@
 					<p>
 						<% post.tags.forEach(function (tag, index) { %>
 						<% if (tag) { %>
-						<a href="/tags/<%= tag %>"><span class="btn btn-info btn-xs"><%= tag %></span></a>
+						<a href="/tags/<%= tag %>"><span class="label label-info"><%= tag %></span></a>
 						<% } %>
 						<% }) %>
 						<%= post.time.minute %>
@@ -50,7 +65,7 @@
 				<%- include comment %>
 			</div>
 		</div>
-		<div class="col-sm-2 col-md-4 col-lg-4 sidebar">
+		<div class="col-md-4 col-lg-4 hidden-xs hidden-sm">
 			<%- include sidebar %>
 		</div>
 	</div>

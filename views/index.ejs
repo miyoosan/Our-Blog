@@ -1,71 +1,9 @@
 <%- include header %>
-<div id="section">
 <div class="section">
   <div class="container">
     <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-        <% posts.forEach(function (post, index) { %>
-        <div class="article">
-          <div class="content-info">
-            <p>
-              <!-- 用户头像 -->
-              <!-- <a href="u/<%= post.name %>"><img src="<%= post.head %>" /></a> -->
-              <a href="u/<%= post.name %>"><strong><%= post.name %></strong></a>
-              &nbsp;&nbsp;发表于 <%= post.time.minute %>
-            </p>
-            <h2>
-              <a href="p/<%= post._id %>"><%= post.title %></a>
-            </h2>
-          </div>
-          <div class="content-thumbnail">
-            <!-- 功能待完善：自动抓取文章里的图片，随机一张作为首页展示的缩略图 -->
-          </div>
-          <div class="content-box">
-            <p><%- post.post %></p>
-          </div>
-          <div class="content-info">
-            <p>
-              <% post.tags.forEach(function (tag, index) { %>
-              <% if (tag) { %>
-              <a href="/tags/<%= tag %>"><span class="btn btn-info btn-xs"><%= tag %></span></a>
-              <% } %>
-              <% }) %>
-              &nbsp;
-              <span class="glyphicon glyphicon-eye-open"></span> <%= post.pv %>&nbsp;
-              <span class="glyphicon glyphicon-comment"></span> <%= post.comments.length %>&nbsp;
-              <span class="glyphicon glyphicon-share-alt"></span>
-              <% if (post.reprint_info.reprint_to_id) { %>
-              <%= post.reprint_info.reprint_to_id.length %>
-              <% } else { %>
-              <%= 0 %>
-              <% } %>
-              &nbsp;
-              <a class="readmore" href="p/<%= post._id %>">阅读全文&rsaquo;&rsaquo;</a>
-            </p>
-          </div>
-          <hr/>
-        </div>
-        <% }); %> 
-        <%- include paging %>
-      </div>
-      <div class="col-sm-2 col-md-4 col-lg-4 hidden-xs hidden-sm">
-        <div class="hot-articles sidebar">
-          <h2>推荐文章</h2>
-          <!-- 随机文章 -->
-          <% var sum = posts.length; %>
-          <ul class="list-unstyled">
-            <% posts.forEach(function (post, index) { %>
-            <% var num = Math.random(); %>
-            <% if (num >= 0.5) { %>
-            <li><a href="p/<%= post._id %>"><%= post.title %></a></li>
-            <% } %>
-            <% }); %>
-          </ul>
-        </div>
-        <%- include sidebar %>
-      </div>
+      <%- include content %>
     </div>
   </div>
-</div>
 </div>
 <%- include footer %>

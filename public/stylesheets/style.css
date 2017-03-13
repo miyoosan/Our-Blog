@@ -130,7 +130,7 @@ body {
 @media (max-width: 425px) {
   .section {
     padding-top: 50px;
-    /*padding-bottom: 30px;*/
+    padding-bottom: 5px;
   }
 }
 .section h2 {
@@ -162,6 +162,10 @@ body {
 }
 .section .article .content-info p {
   font-size: 12px;
+}
+.section .article .content-info .label-info:hover,
+.section .article .content-info .label-info:focus {
+  background-color: #31b0d5;
 }
 .section .article .content-box {
   font-size: 1em !important;
@@ -196,6 +200,9 @@ body {
   line-height: 34px;
 }
 
+.section .sidebar>div+div {
+  display: none;
+}
 .section .login-out {
   margin: 20% auto;
   width: 350px;
@@ -217,9 +224,12 @@ body {
 
 .section .user-info {
   padding-top: 15px;
+  padding-bottom: 15px;
   background-color: #fcfcfc;
 }
-
+.section .user-info ul {
+  margin-bottom: 0;
+}
 /* ######################## */
 /* #   分页样式.paging    # */
 /* ######################## */
@@ -303,6 +313,7 @@ body {
 .footer .navbar-fixed-bottom {
   padding-top: 10px;
   background-color: #fcfcfc;
+  box-shadow: 1px 1px 5px #eee;
 }
 .footer .navbar-fixed-bottom a {
   padding-left: 8px;

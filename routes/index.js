@@ -132,7 +132,7 @@ router.get('/post', function(req, res, next) {
 router.post('/post', checkLogin);
 router.post('/post', function(req, res, next) {
 	var currentUser = req.session.user,
-	    tags = [req.body.tag1, req.body.tag2, req.body.tag3];
+	    tags = [req.body.tag];
 	var newPost = new Post({
 	    	name: currentUser.name, 
 	    	// head: currentUser.head, 
@@ -267,6 +267,7 @@ router.get('/u/:name', function(req, res, next) {
 				title: user.name,
 				posts: posts,
 				page: page,
+				total: total,
 				lastPage: Math.floor(total/10) + 1,
 				isFirstPage: (page - 1) == 0,
 				isLastPage: ((page - 1) * 10 + posts.length) == total,

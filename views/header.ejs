@@ -1,30 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- <meta charset="UTF-8" /> -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
   <meta name="renderer" content="webkit">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Fairy Blog</title>
+  <title>Our Blog</title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
   <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
   <link rel="stylesheet" href="/stylesheets/style.css">
-  <!-- <link rel="stylesheet" href="/stylesheets/blog.css"> -->
-  <script charset="utf-8" src="/KindEditor/kindeditor-all-min.js"></script>
-  <script charset="utf-8" src="/KindEditor/lang/zh-CN.js"></script>
-  <script>
-  var editor;
-  KindEditor.ready(function(K) {
-    editor = K.create('textarea', {
-      allowImageUpload : false,
-      items : [
-      'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic',
-      'underline', 'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright',
-      'insertorderedlist', 'insertunorderedlist', '|', 'emoticons', 'image', 'link']
-    });
-  });
-  </script>
 </head>
 <body>
   <div class="header">
@@ -40,7 +24,6 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <!-- <a class="navbar-brand" href="#">Fairyoop</a> -->
               <span class="navbar-brand"><a href="/"><img src="../images/logos.png" /></a></span>
             </div>
           </div>
@@ -78,7 +61,7 @@
         <div class="col-sm-3 col-md-3 col-lg-3 hidden-xs">
           <ul class="nav navbar-nav navbar-right">
             <% if (user) { %>
-            <li><a href="u/<%= user.name %>"><span class="glyphicon glyphicon-user"></span> <%= user.name %></a></li>
+            <li><a href="/u/<%= user.name %>"><span class="glyphicon glyphicon-user"></span> <%= user.name %></a></li>
             <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> 退出</a></li>
             <% } else { %> 
             <li><a href="/reg"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
