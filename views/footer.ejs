@@ -74,10 +74,7 @@ window.onload = function () {
 			}
 			this.className = "active";
 			var index = this.index;
-			ajax("jsons/website.json", function (xmlhttp) {
-				// if (xmlhttp.status == 404) {
-				// 	alert("数据请求失败！请重试！");
-				// }
+			ajax("jsons/website.json?t="+new Date().getTime(), function (xmlhttp) {
 				var webSite = JSON.parse(xmlhttp.responseText);
 				var arr = webSite.sites[index].site;
 				var html = "<ul class='list-unstyled'>";
@@ -86,12 +83,14 @@ window.onload = function () {
 				}
 				html += "</ul>";
 				sidebarDiv.innerHTML = html;
+			}, function (status) {
+				alert(status);
 			});
 		};
 	}
 
 	// Ajax请求
-	function ajax (url, callAjax) {
+	function ajax (url, callAjax, callback) {
 		// 创建Ajax对象
 		if (window.XMLHttpRequest) {
 			var oAjax = new XMLHttpRequest();
@@ -104,8 +103,12 @@ window.onload = function () {
 		oAjax.send();
 		// 接收
 		oAjax.onreadystatechange = function () {
-			if (oAjax.readyState == 4 && oAjax.status == 200) {
-				callAjax(this);
+			if (oAjax.readyState == 4) {
+				if (oAjax.status == 200) {
+					callAjax(this);//服务器返回的status有问题，无论url对错，总是200，有待解决
+				} else {
+					callback(this.status);
+				}
 			}
 		};
 	}

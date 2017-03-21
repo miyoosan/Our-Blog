@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="charset=utf-8" />
+	<title>轮播图</title>
+	<style type="text/css">
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	#container {
+		position: relative;
+		left: 50%;
+		transform: translate(-50%);
+		width: 600px;
+		height: 300px;
+		border: 3px solid #eee;
+		overflow: hidden;
+	}
+	#img-wrapper {
+		position: absolute;
+		left: -600px;
+		width: 4200px;
+		height: 300px;
+		z-index: 1;
+	}
+	#img-wrapper img {
+		width: 600px;
+		height: 300px;
+		float: left;
+	}
+	#buttons {
+		position: absolute;
+		bottom: 20px;
+		left: 250px;
+		height: 10px;
+		width: 100px;
+		z-index: 2;
+	}
+	#buttons span {
+		float: left;
+		width: 10px;
+		height: 10px;
+		margin-right: 5px;
+		background-color: #333;
+		border: 1px solid #fff;
+		border-radius: 50%;
+		cursor: pointer;
+	}
+	#buttons .on {
+		background-color: #ff4500;
+	}
+	.arrow {
+		position: absolute;
+		top: 50%;
+		transform: translate(0,-50%);
+		width: 40px;
+		height: 40px
+		line-height: 40px;
+		font-size: 36px;
+		font-weight: bold;
+		text-align: center;
+		text-decoration: none;
+		color: #fff;
+		background-color: rgba(0, 0, 0, .3);
+		display: none;
+		cursor: pointer;
+		z-index: 2;
+	}
+	.arrow:hover,
+	.arrow:focus {
+		background-color: rgba(0, 0, 0, .7);
+	}
+	#container:hover .arrow,
+	#container:focus .arrow {
+		display: block;
+	}
+	#prev {
+		left: 20px;
+	}
+	#next {
+		right: 20px;
+	}
+	</style>
+</head>
+
+<body>
+<div id="container" style="width: 600px">
+	<div id="img-wrapper" style="left:-600px">
+		<img src="http://upload.jianshu.io/admin_banners/web_images/2846/b7b56a9de59c712555f4abca16e15ae91d15af35.jpg" alt="B7b56a9de59c712555f4abca16e15ae91d15af35" title="05-日语入门">
+		<img src="http://upload.jianshu.io/admin_banners/web_images/2295/2dbb6d6e2abd9f7e50c56adfff92f9613ad9c502.jpg" alt="2dbb6d6e2abd9f7e50c56adfff92f9613ad9c502" title="01-官方专题汇总">
+		<img src="http://upload.jianshu.io/admin_banners/web_images/2856/53262705e639d65d0bbd485c1d3167df9ea6dcae.jpg" alt="53262705e639d65d0bbd485c1d3167df9ea6dcae" title="02-世间事">
+		<img src="http://upload.jianshu.io/admin_banners/web_images/2861/f2d56fd916debebd802bc4a5dfc5e007b52595aa.jpg" alt="F2d56fd916debebd802bc4a5dfc5e007b52595aa" title="03-短篇小说">
+		<img src="http://upload.jianshu.io/admin_banners/web_images/2852/f8643100707ff27111687c0b5b1445edd1fd412a.jpg" alt="F8643100707ff27111687c0b5b1445edd1fd412a" title="04-终有人住进你心里">
+		<img src="http://upload.jianshu.io/admin_banners/web_images/2846/b7b56a9de59c712555f4abca16e15ae91d15af35.jpg" alt="B7b56a9de59c712555f4abca16e15ae91d15af35" title="05-日语入门">
+		<img src="http://upload.jianshu.io/admin_banners/web_images/2295/2dbb6d6e2abd9f7e50c56adfff92f9613ad9c502.jpg" alt="2dbb6d6e2abd9f7e50c56adfff92f9613ad9c502" title="01-官方专题汇总">
+	</div>
+	<div id="buttons">
+		<span class="on"></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+	<a href="javascript:0;" class="arrow" id="prev">&lt;</a>
+	<a href="javascript:0;" class="arrow" id="next">&gt;</a>
+</div>
+<script type="text/javascript">
+window.onload = function () {
+
+	var container = document.getElementById("container"),
+	    imgWrapper = document.getElementById("img-wrapper"),
+	    buttons = document.getElementById("buttons").getElementsByTagName("span"),
+	    prev = document.getElementById("prev"),
+	    next = document.getElementById("next"),
+	    index = 0,
+	    i=0, 
+	    len=buttons.length,
+	    animated = false,
+	    time = 250, // 位移总时间
+		interval = 10; //位移间隔时间
+	var minWidth = -parseInt(container.style.width);
+	var maxWidth = minWidth*len;
+
+    // 给按钮添加索引值 0 1 2 3 4
+	for (i=0; i<len; i++) {
+		buttons[i].index = i;
+	}
+
+	// 显示按钮的激活状态
+	function showButton (idx) {
+		for (i=0; i<len; i++) {
+			if (buttons[i].className == "on") {
+				buttons[i].className = "";
+				break;
+			}
+		}
+		// 给当前按添加激活状态
+		buttons[idx].className = "on";
+	}
+	 
+	// 轮播函数
+	function animate (offset, callback) {
+		animated = true;
+		var speed = offset/(time/interval), //每一次的位移量
+		    newLeft = parseInt(imgWrapper.style.left) + offset; // 计算一个按钮被激活状态时，图片容器的偏移位置
+		var offLeft = newLeft + "px";
+		// 判断是否超出边界，进行相应处理，保证无限循环
+		if (newLeft < maxWidth) {
+			offLeft = minWidth + "px";
+		}
+		if (newLeft > minWidth) {
+			offLeft = maxWidth + "px";
+		}
+		function go () {
+			if (((speed < 0 )&&(parseInt(imgWrapper.style.left) > newLeft)) || ((speed > 0) && (parseInt(imgWrapper.style.left) < newLeft))) {
+				imgWrapper.style.left = parseInt(imgWrapper.style.left) + speed + "px"; 
+				setTimeout(go, interval); // 递归直到位移完成
+			} else {
+				imgWrapper.style.left = offLeft;
+				index = Math.abs(parseInt(imgWrapper.style.left)/minWidth) - 1;
+				callback(index);
+				animated = false;
+			}
+		}
+		go();
+	}
+
+	// 前进
+	next.onclick = function () {
+		if (!animated) {
+			animate(minWidth, showButton);
+		}
+	};
+
+	// 后退
+	prev.onclick = function () {
+		if (!animated) {
+			animate(-minWidth, showButton);
+		}
+	};
+
+	// 点击按钮
+	for (i=0; i<len; i++) {
+		buttons[i].onclick = function () {
+			// 如果点击已经激活的按钮，不作响应
+			if (this.index == index) {
+				return;
+			}
+			// 否则，计算被点击按钮与当前激活按钮之间的偏移量
+			var offset = minWidth * (this.index - index);
+			animate(offset, showButton);
+		}
+	}
+	
+};
+</script>
+</body>
