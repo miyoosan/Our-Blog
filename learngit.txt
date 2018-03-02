@@ -210,5 +210,62 @@
  配置文件全局状态下，在用户主目录的.gitconfig里，否则就在仓库的.git/config里。可以通过cat <file>命令查看
  
  
- 
+ <script>
+  
+  function a() {
+  }
+  var object = new Object();
+  console.log('Object <==>', Object, new Number(1))
+  
+  console.log('*************************基本概念*************************')
+  console.log('一、数据类型')
+  console.log('【0】 javascript中，有六种数据类型，包括null, undefined, string, boolean, number等五种基本类型(Primitive type), 以及引用类型(Reference type, 比如对象object、函数function)')
+  console.log('【1】 其中，访问string, boolean, number这三种类型变量的属性时，js解释器会先将它们包装成一个外部无法直接访问的临时对象，然后再通过内部方式访问这个临时对象上相应的属性')
+  console.log('【2】 该临时对象可以看成是通过new出来的实例，比如new String(), new Boolean(), new Number()，因此，如果原型链中不存在访问的属性，返回的值将是undefined，反之，则返回原型链中对应的属性')
+  console.log('【3】 例如：直接访问"a".a，返回结果为undefined，而如果先令String.prototype.a = 1，则再访问"a".a，返回的结果便是1')
+  console.log('【4】 而null，代表一个数据被定义了，存在着，但为空，什么也没有。undefined则是指未被定义，不存在')
+  console.log('【5】 在ECMA定义实现的内置方法对象中，String, Number, Boolean等内置方法对象分别对应string, number, boolean三种基本类型')
+  console.log('【6】 然而null 与 undefined都没有对应的内置方法对象，因此访问它们的属性时，会报类型错误，因为浏览器不会像string,number等类型一样，在访问它的属性时将它包装成临时对象，这点，需要注意区分')
+  console.log('【7】 引用类型，属于比较复杂的数据类型，存放在堆中，内存地址一般是不连续的。而基本类型数据存放在栈中，仅有一个内存地址。对基本类型数据的访问，是直接访问它们的内存地址，而对引用类型数据的访问，则是访问指向它们所占内存的引用的内存地址')
+  console.log('二、原型链')
+  console.log('【0】 原型链的意义，在于实现继承，在面向对象语言中，继承是类的特性之一，而js中没有严格意义上的类，是用构造函数与原型对象来模拟的')
+  console.log('【1】 其中原型对象只存在于方法对象上，比如Object, Function, function(){}等等都拥有prototype属性')
+  console.log('【2】 prototype，是方法对象的一个属性，称为原型对象（简称原型）')
+  console.log('【3】 __proto__，是浏览器实现ECMA标准的对象属性，称为隐式原型，用来访问对象的原型，而访问对象的原型的__proto__，便是访问对象的原型的原型')
+  console.log('【4】 一条原型链是由一个个有继承关系的prototype构成的，但完整的原型链是由prototyp与__proto__构成的。如果说prototype是原型链的节点，那么，__proto__便是链接这些节点的单向链条，由低层指向高层')
+  console.log('【5】 Object.prototype位于所有原型链的最顶层，所有继承都是从这里开始的，再往上指向null，意思是Object.prototype不继承任何东西,即Object.prototype.__proto__ === null')
+  console.log('【6】 是个函数都有构造函数的功能，通过new命令，即可启用构造函数功能，比如function foo(){}; var a = new foo()，则a的构造函数为foo')
+  console.log('【7】 而函数是方法对象，拥有prototype属性，在foo.prototype上定义一些属性或方法后，则通过foo构造出来的对象，都将可以访问这些属性或方法，这就是继承。比如设foo.prototype.a = 1, 则例子里的a.a取值就为1。当然，继承的方式有很多种，这只是最简单的一种方式')
+  console.log('【8】 通过访问一个对象的原型的constructor属性，可以找到构造该对象的构造函数，比如，上条例子中，a.__proto__.constructor === foo的比较结果是true')
+  console.log('【9】 js的继承算是灵活的，prototype与constructor都可以根据自己的意愿来指定与修改')
+  console.log('三、函数')
+  console.log('【0】 所有对象都是由函数构造出来的，所有函数也对象，被称为方法对象。而匿名函数function(){}不仅是函数，而且还是原型对象，可以称为方法原型对象')
+  console.log('【1】 所有对象的顶层原型都是Object.prototype，这在前面已经提过，而匿名函数的原型，便是Object.prototype')
+  console.log('【2】 Function作为内置的方法对象，它的原型是匿名函数，即Function.__proto__是一个匿名函数。而它自然也是函数构造出来的，它的构造函数是它本身，即Function.__proto__.constructor === Function')
+  
+  console.log('Object.prototype', Object.prototype)
+  console.log('// _proto_是浏览器实现ECMA标准的对象属性，用来访问对象的原型，而Object.prototype是原型链的最顶层，所有继承都是从这里开始的，再往上指向null，意思是Object.prototype不继承任何东西，即Object.prototype.__proto__ 恒等于 null')
+  console.log('Object.prototype.__proto__', Object.prototype.__proto__)
+
+  console.log('// constructor是方法对象，本身也是指针类型，指向构造函数，Object.prototype.constructor的构造函数便是Object')
+  console.log('Object', Object)
+  console.log('Function', Function)
+  console.log('Function.prototype', Function.prototype)
+  console.log('Function.__proto__', Function.__proto__)
+  console.log('Function.__proto__.__proto__', Function.__proto__.__proto__)
+  console.log('Function.__proto__.constructor', Function.__proto__.constructor)
+  console.log('Function.constructor', Function.constructor)
+  console.log('Object.constructor', Object.constructor)
+  console.log('Object.prototype.constructor', Object.prototype.constructor)
+  console.log('Object.prototype.constructor.prototype', Object.prototype.constructor.prototype)
+  
+  console.log('Object.prototype.constructor.constructor', Object.prototype.constructor.constructor)
+
+  console.log('Object.prototype.constructor.__proto__', Object.prototype.constructor.__proto__)
+  console.log('Object.prototype.constructor.constructor.prototype', Object.prototype.constructor.constructor.prototype)
+
+  console.log('object = new Object()', object)
+  console.log('object.prototype',object.prototype)
+
+</script>
  
