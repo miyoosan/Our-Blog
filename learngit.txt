@@ -268,4 +268,100 @@
   console.log('object.prototype',object.prototype)
 
 </script>
+
+<!DOCTYPE html>
+<htmL>
+
+  <head>
+    <meta charset="utf-8" />
+    <title>todolist</title>
+    <style>
+      .hidden {
+        display: none;
+      }
+      .visible {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <h1>TODO:
+        <span id="todoCount">0</span>
+      </h1>
+      <div id="todoPlaceholder">暂无待办事项</div>
+      <ul id="todoList"></ul>
+      <div>
+        <input id="todoItemNew" placeholder="请输入待办事项" />
+        <button id="todoButtonAdd">添加</button>
+      </div>
+    </div>
+    <!-- 控制脚本 -->
+    <script>
+      // 应用的创建、初始化，销毁
+      function Todo() {
+        // 缓存节点
+        this.$Count = document.querySelector('#todoCount').firstChild;
+        this.$List = document.querySelector('#todoList');
+        this.$ItemNew = document.querySelector('#todoItemNew');
+        this.$ButtonAdd = document.querySelector('#todoButtonAdd');
+        this.$PlaceholderClass = document.querySelector('#todoPlaceholder').className;
+
+        // 预定义要新增的待办事项
+        const li = document.createElement('li');
+        li.setAttribute('class', 'todoItem');
+        li.innerHTML = this.$ItemNew.value;
+        this.newItem = li;
+      }
+
+      // 定义要新增的待办事项
+      Todo.prototype.createItem = function () {
+        const li = document.createElement('li');
+        li.setAttribute('class', 'todoItem');
+        li.innerHTML = this.$ItemNew.value;
+        this.newItem = li;
+        return this;
+      }
+      
+      // 新增待办事项
+      Todo.prototype.addItem = function(itemNode) {
+        this.$List.appendChild(itemNode || this.newItem)
+        return this;
+      }
+
+      // 控制todoPlaceholder的显隐
+      Todo.prototype.checkPlaceholder = function() {
+        if (this.$List.childNodes.length) {
+          this.$PlaceholderClass !== 'hidden' && (this.$PlaceholderClass = 'hidden');
+        } else {
+          this.$PlaceholderClass !== 'visible' && (this.$PlaceholderClass = 'visible');
+        }
+        return this;
+      }
+
+      const todo = new Todo();
+      todo.$ButtonAdd.addEventListener('click', (e) => {
+        // 定义并添加待办事项, 然后检测并设置占位文字
+        todo.createItem().addItem().checkPlaceholder();
+      });
+      
+      Function.prototype.currying = function () {
+        var args = [],
+          self = this
+        var f = function () {
+          if (arguments.length === 0) {
+            console.log('args', args);
+            return self.apply(this, args)
+          } else {
+            [].push.apply(args, arguments)
+            return f
+          }
+        }
+        return f
+      }
+    </script>
+  </body>
+
+</htmL>
  
