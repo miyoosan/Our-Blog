@@ -276,3 +276,11 @@ https://www.jianshu.com/p/99b6b4cd273c?utm_campaign=maleskine&utm_content=note&u
 https://blog.csdn.net/qq_21792169/article/details/51628123
 https://blog.csdn.net/TMQ1225/article/details/53945678
 http://www.cnblogs.com/anywaywolf/p/5511754.html
+Fiddler显示IP的设置方法
+https://blog.csdn.net/mlgglm/article/details/42678205
+抓包设置
+https://blog.csdn.net/llixiangjian/article/details/73034012
+抓包：小白入门
+https://blog.csdn.net/gld824125233/article/details/52621456
+Fiddler命令
+http://docs.telerik.com/fiddler/knowledgebase/quickexec
