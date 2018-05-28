@@ -286,3 +286,7 @@ Fiddler命令
 http://docs.telerik.com/fiddler/knowledgebase/quickexec
 CE教程
 https://blog.csdn.net/xfgryujk/article/details/50067271
+GG转XS视频
+http://v.qiye10000.com/v/XMuUeODquNT31MA.html
+GG官方api
+https://gameguardian.net/help/classgg.html#aab9ef0602725a0e274d5c3404c44a19f
