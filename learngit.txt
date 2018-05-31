@@ -311,3 +311,5 @@ https://blog.csdn.net/gamemonkey/article/details/28266513
 https://blog.csdn.net/zhangmiaoping23/article/details/53136278
 LUA加密解密
 https://blog.csdn.net/Clover_CC/article/details/80263196
+LUA异或加密源码
+https://github.com/ganlvtech/lua-simple-encrypt
