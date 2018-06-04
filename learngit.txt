@@ -316,3 +316,5 @@ LUA异或加密源码
 https://github.com/ganlvtech/lua-simple-encrypt
 LUA加密解密工具
 https://www.52pojie.cn/thread-743658-1-1.html
+XSS在线转换
+http://www.toolsxx.com/code/xss.html
