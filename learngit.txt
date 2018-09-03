@@ -528,3 +528,61 @@ export default {
 };
 
 
+
+.normal {
+  font-family: Georgia, sans-serif;
+  padding: 8px 32px 0;
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: normal;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+
+.actionRow {
+  text-align: left;
+  margin: 8px 0;
+  font-family: sans-serif;
+}
+
+.actionRow button+button {
+  margin-left: 16px;
+}
+
+.actionCol {
+  max-width: 192px;
+}
+
+.totalText {
+  padding-right: 32px;
+}
+
+.progressCol {
+  padding-left: 32px;
+}
+
+.progressCol>span {
+  position: relative;
+  top: 7px;
+}
+
+.progressCol>div {
+  width: 60%;
+  top: 5px;
+  margin-right: 32px;
+}
+
+  <title>Novel Duplication</title>
+  <link rel="stylesheet" href="index.css" />
+  <style>
+    .ant-table-thead .ant-table-column-sorter {
+      top: -4px;
+    }
+    .ant-table-tbody .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+      padding-top: 8px!important;
+      padding-bottom: 8px!important;
+    }
+  </style>
