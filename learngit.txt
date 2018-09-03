@@ -318,3 +318,213 @@ LUA加密解密工具
 https://www.52pojie.cn/thread-743658-1-1.html
 XSS在线转换
 http://www.toolsxx.com/code/xss.html
+
+import React from 'react';
+import { connect } from 'dva';
+import { Input, Button, Row, Col, Table, Progress } from 'antd';
+import styles from './IndexPage.css';
+
+function checkTxt(e, dispatch) {
+  // 去除空格和回车换行符
+  let text = e.target.value.replace(/[\s]||[\r]/g, '');
+  dispatch({
+    type: 'db/save',
+    payload: {
+      text,
+      inputText: e.target.value
+    }
+  })
+}
+
+const columns = [{
+  title: '已检测文本',
+  dataIndex: 'keyword',
+}, {
+  title: '飘红',
+  dataIndex: 'redshot',
+  width: '100px',
+  sorter: (a, b) => a.redshot - b.redshot
+}, {
+  title: '操作',
+  dataIndex: 'relinks',
+  width: '100px',
+  render: (text, record) => {
+    return <a href={`https://www.so.com/s?q=${encodeURIComponent(record.keyword)}`} target="_blank">查看详情</a>
+  }
+}]
+
+function checkDuplicate(e, dispatch) {
+  dispatch({
+    type: 'db/checkDuplicate'
+  })
+}
+
+function clearChecktext(e, dispatch) {
+  dispatch({
+    type: 'db/clearChecktext'
+  })
+}
+
+function closeWebSocket(e, dispatch) {
+  dispatch({
+    type: 'db/closeWebSocket'
+  })
+}
+
+function openWebSocket(e, dispatch) {
+  dispatch({
+    type: 'db/openWebSocket'
+  })
+}
+
+function IndexPage({ dispatch, history, location, match, staticContext, ...state }) {
+  const { text, inputText, tbdata } = state;
+  return (
+    <div className={styles.normal}>
+      <h1 className={styles.title}>Novel Duplication</h1>
+      <Input.TextArea
+        value={inputText}
+        autosize={{ minRows: 6, maxRows: 6 }}
+        placeholder="待检测文本，仅支持360查重"
+        onChange={e => checkTxt(e, dispatch)}
+      />
+      <Row className={styles.actionRow}>
+        <Col span={4} className={styles.actionCol}>
+          <Button onClick={e => checkDuplicate(e, dispatch)} type="primary">开始检测</Button>
+          <Button onClick={e => clearChecktext(e, dispatch)}>清空文本</Button>
+        </Col>
+        <Col span={20} className={styles.progressCol}>
+          <span>检测进度：</span>
+          <Progress percent={70} status="active" strokeWidth={18} />
+          <span className={styles.totalText}>总字数：{text.length}字</span>
+          <span>360原创度：92.6%</span>
+        </Col>
+      </Row>
+      <Table
+        dataSource={tbdata}
+        columns={columns}
+        size="default"
+      />
+      <Button onClick={e => closeWebSocket(e, dispatch)}>close</Button>
+      <Button onClick={e => openWebSocket(e, dispatch)}>open</Button>
+      <div id="log"></div>
+    </div>
+  );
+}
+
+IndexPage.propTypes = {
+};
+
+function mapStateToProps(state) {
+  return {
+    ...state.db
+  }
+}
+
+export default connect(mapStateToProps)(IndexPage);
+
+
+import { message } from 'antd';
+
+var ws;
+
+init();
+
+function init() {
+  // Connect to Web Socket
+  ws = new WebSocket("ws://localhost:9001/");
+  // Set event handlers.
+  ws.onopen = function() {
+    output("onopen");
+  };
+
+  ws.onmessage = function(e) {
+    // e.data contains received string.
+    output("onmessage: " + e.data);
+  };
+
+  ws.onclose = function() {
+    output("onclose");
+  };
+  ws.onerror = function(e) {
+    output("onerror");
+    console.log(e)
+  };
+}
+
+function sendMessage(msg) {
+  ws.send(msg);
+  output("send: " + msg);
+}
+
+function output(str) {
+  var log = document.getElementById("log");
+  var escaped = str.replace(/&/, "&amp;").replace(/</, "&lt;").
+    replace(/>/, "&gt;").replace(/"/, "&quot;"); // "
+  log.innerHTML = escaped + "<br>" + log.innerHTML;
+}
+
+export default {
+
+  namespace: 'db',
+
+  state: {
+    text: '',
+    tbdata: []
+  },
+
+  subscriptions: {
+    setup({ dispatch, history }) {  // eslint-disable-line
+    },
+  },
+
+  effects: {
+    *openWebSocket({ payload }, { call, put, select }) {
+      ws.close();
+      init();
+    },
+    *checkDuplicate({ payload }, { call, put, select }) {  // eslint-disable-line
+      const { text } = yield select(state => state.db);
+      if (!text) return message.warning('请输入文本', 3);
+      console.log('开始检测，字数共', text.length)
+      let _text = text.substring(0, 34);
+      const tbdata = [{ keyword: _text, redshot: 0 }];
+      sendMessage(_text)
+      while(_text.length >= 34) {
+        const len = tbdata.length;
+        _text = text.substring(34*len, 34*(len+1));
+        tbdata[tbdata.length] = { keyword: _text, redshot: len }
+        sendMessage(_text)
+      }
+      // 将分段好的数据发送给后端，让爬虫开始工作。每当一个爬虫返回结果，就刷新一次tbdata
+      yield put({
+        type: 'save',
+        payload: {
+          tbdata
+        }
+      });
+    },
+    *clearChecktext({ payload }, { call, put, select }) {
+      yield put({
+        type: 'save',
+        payload: {
+          text: '',
+          inputText: undefined,
+          tbdata: []
+        }
+      })
+    },
+    *closeWebSocket({ payload }, { call, put, select }) {
+      ws.close();
+    },
+  },
+
+  reducers: {
+    save(state, action) {
+      return { ...state, ...action.payload };
+    },
+  },
+
+};
+
+
