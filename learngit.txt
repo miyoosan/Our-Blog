@@ -339,23 +339,32 @@ function checkTxt(e, dispatch) {
 const columns = [{
   title: '已检测文本',
   dataIndex: 'keyword',
+  render: (text, record) => {
+    return <span style={{ color: record.error ? 'red' : 'rgba(0, 0, 0, 0.65)' }}>{text}</span>
+  }
 }, {
   title: '飘红',
   dataIndex: 'redshot',
   width: '100px',
-  sorter: (a, b) => a.redshot - b.redshot
+  sorter: (a, b) => a.redshot - b.redshot,
+  render: (text, record) => {
+    return <span style={{ color: `${text}` !== '0' ? 'red' : 'rgba(0, 0, 0, 0.65)' }}>{text}</span>
+  }
 }, {
   title: '操作',
   dataIndex: 'relinks',
   width: '100px',
   render: (text, record) => {
-    return <a href={`https://www.so.com/s?q=${encodeURIComponent(record.keyword)}`} target="_blank">查看详情</a>
+    return <a href={`https://www.so.com/s?q=${encodeURIComponent(record.keyword)}`} target="_blank" rel="noopener noreferrer">查看详情</a>
   }
 }]
 
 function checkDuplicate(e, dispatch) {
   dispatch({
-    type: 'db/checkDuplicate'
+    type: 'db/checkDuplicate',
+    payload: {
+      dispatch
+    }
   })
 }
 
@@ -365,20 +374,8 @@ function clearChecktext(e, dispatch) {
   })
 }
 
-function closeWebSocket(e, dispatch) {
-  dispatch({
-    type: 'db/closeWebSocket'
-  })
-}
-
-function openWebSocket(e, dispatch) {
-  dispatch({
-    type: 'db/openWebSocket'
-  })
-}
-
 function IndexPage({ dispatch, history, location, match, staticContext, ...state }) {
-  const { text, inputText, tbdata } = state;
+  const { text, inputText, result, createPercent, progressPercent, loading } = state;
   return (
     <div className={styles.normal}>
       <h1 className={styles.title}>Novel Duplication</h1>
@@ -390,24 +387,26 @@ function IndexPage({ dispatch, history, location, match, staticContext, ...state
       />
       <Row className={styles.actionRow}>
         <Col span={4} className={styles.actionCol}>
-          <Button onClick={e => checkDuplicate(e, dispatch)} type="primary">开始检测</Button>
+          <Button onClick={e => checkDuplicate(e, dispatch)} loading={loading} type="primary">{loading ? '检测中' : '开始检测'}</Button>
           <Button onClick={e => clearChecktext(e, dispatch)}>清空文本</Button>
         </Col>
         <Col span={20} className={styles.progressCol}>
           <span>检测进度：</span>
-          <Progress percent={70} status="active" strokeWidth={18} />
+          <Progress
+            percent={progressPercent}
+            status={progressPercent === 100 ? 'success' : 'active'}
+            strokeWidth={18}
+          />
           <span className={styles.totalText}>总字数：{text.length}字</span>
-          <span>360原创度：92.6%</span>
+          <span>360原创度：{createPercent}</span>
         </Col>
       </Row>
       <Table
-        dataSource={tbdata}
+        dataSource={result}
         columns={columns}
         size="default"
+        rowKey="keyword"
       />
-      <Button onClick={e => closeWebSocket(e, dispatch)}>close</Button>
-      <Button onClick={e => openWebSocket(e, dispatch)}>open</Button>
-      <div id="log"></div>
     </div>
   );
 }
@@ -425,22 +424,29 @@ export default connect(mapStateToProps)(IndexPage);
 
 
 import { message } from 'antd';
+import constants from '../utils/constants';
+
+const { MAX_QUERY, FS_FMAX, EFF_MIN_LEN } = constants
 
 var ws;
 
-init();
-
-function init() {
+function init(dispatch, callback) {
   // Connect to Web Socket
   ws = new WebSocket("ws://localhost:9001/");
   // Set event handlers.
   ws.onopen = function() {
     output("onopen");
+    callback && callback();
   };
 
   ws.onmessage = function(e) {
     // e.data contains received string.
-    output("onmessage: " + e.data);
+    e.data && dispatch({
+      type: 'receivedMsg',
+      payload: {
+        data: e.data
+      }
+    })
   };
 
   ws.onclose = function() {
@@ -448,20 +454,20 @@ function init() {
   };
   ws.onerror = function(e) {
     output("onerror");
-    console.log(e)
   };
 }
 
 function sendMessage(msg) {
-  ws.send(msg);
-  output("send: " + msg);
+    ws.send(msg);
 }
 
 function output(str) {
-  var log = document.getElementById("log");
-  var escaped = str.replace(/&/, "&amp;").replace(/</, "&lt;").
-    replace(/>/, "&gt;").replace(/"/, "&quot;"); // "
-  log.innerHTML = escaped + "<br>" + log.innerHTML;
+  console.warn('WebSocket Connection：', str)
+}
+
+function max(arr) {
+  if (!arr.length) return 0;
+  return Math.max.apply(null, arr);
 }
 
 export default {
@@ -470,39 +476,73 @@ export default {
 
   state: {
     text: '',
-    tbdata: []
+    tbdata: [],
+    result: [],
+    loading: false,
+    inputText: undefined,
+    progressPercent: 0,
+    createPercent: ''
   },
 
   subscriptions: {
     setup({ dispatch, history }) {  // eslint-disable-line
+      !ws && dispatch({
+        type: 'openWebSocket',
+        payload: {
+          dispatch
+        }
+      })
     },
   },
 
   effects: {
-    *openWebSocket({ payload }, { call, put, select }) {
-      ws.close();
-      init();
+    *openWebSocket({ payload: { dispatch, callback } }, { call, put, select }) {
+      ws && ws.close();
+      yield init(dispatch, callback);
     },
-    *checkDuplicate({ payload }, { call, put, select }) {  // eslint-disable-line
-      const { text } = yield select(state => state.db);
-      if (!text) return message.warning('请输入文本', 3);
-      console.log('开始检测，字数共', text.length)
-      let _text = text.substring(0, 34);
-      const tbdata = [{ keyword: _text, redshot: 0 }];
-      sendMessage(_text)
-      while(_text.length >= 34) {
-        const len = tbdata.length;
-        _text = text.substring(34*len, 34*(len+1));
-        tbdata[tbdata.length] = { keyword: _text, redshot: len }
-        sendMessage(_text)
-      }
-      // 将分段好的数据发送给后端，让爬虫开始工作。每当一个爬虫返回结果，就刷新一次tbdata
+    *checkDuplicate({ payload: { dispatch } }, { call, put, select }) {  // eslint-disable-line
+      // 清空缓存与结果
       yield put({
         type: 'save',
         payload: {
-          tbdata
+          tbdata: [],
+          result: [],
+          progressPercent: 0,
+          createPercent: ''
+        }
+      })
+      // 获取待检测的文本
+      const { text } = yield select(state => state.db);
+      if (!text) return message.warning('请输入文本', 3);
+      console.log('开始检测，字数共', text.length)
+      let _text = text.substring(0, MAX_QUERY);
+      const tbdata = [_text];
+      while(_text.length >= MAX_QUERY) {
+        const len = tbdata.length;
+        _text = text.substring(MAX_QUERY*(FS_FMAX*len+1), MAX_QUERY*FS_FMAX*(len+1));
+        tbdata[len] = _text;
+      }
+      if(tbdata[tbdata.length-1].length < EFF_MIN_LEN) tbdata.pop();
+      // 开始统计进度，提示正在检测
+      yield put({
+        type: 'save',
+        payload: {
+          tbdata: tbdata,
+          loading: true
         }
       });
+      if (ws.readyState !== 1) {
+        yield put({
+          type: 'openWebSocket',
+          payload: {
+            dispatch,
+            callback: () => { sendMessage(JSON.stringify(tbdata)) }
+          }
+        })
+      } else {
+        // 将分段好的数据发送给后端，让爬虫开始工作。每当一个爬虫返回结果，就刷新一次tbdata
+        sendMessage(JSON.stringify(tbdata))
+      }
     },
     *clearChecktext({ payload }, { call, put, select }) {
       yield put({
@@ -510,12 +550,56 @@ export default {
         payload: {
           text: '',
           inputText: undefined,
-          tbdata: []
+          progressPercent: 0,
+          createPercent: '',
+          tbdata: [],
+          result: []
         }
       })
     },
+    *receivedMsg({ payload: { data } }, { call, put, select }) {
+      const { result, tbdata } = yield select(state => state.db);
+      let msg = {};
+      try {
+        msg = JSON.parse(data);
+        // 飘红算法，取最大值
+        msg.redshot = max(msg.redlist.map(emlist => {
+          return max(emlist)
+        }))
+      } catch(err) {
+        msg = {
+          keyword: `Oh!检测出错了：${unescape((data || '').replace(/\\u/g, '%u'))}`,
+          redshot: 0,
+          error: true
+        }
+      }
+      result[result.length] = msg;
+      const resultLen = result.length;
+      const tbdataLen = tbdata.length;
+      const loading = resultLen !== tbdataLen;
+      let createPercent = '';
+      if (!loading) {
+        const totalCheck = tbdataLen*MAX_QUERY + tbdata[tbdataLen-1].length - MAX_QUERY;
+        const redshotList = result.map(res => res.redshot);
+        const redshotNum = resultLen ? redshotList.reduce((prev, next) => prev + next) : 0;
+        const redPercent = 100*(totalCheck-redshotNum)/totalCheck;
+        createPercent = totalCheck ? `${(redPercent >= 0 ? redPercent : 0).toFixed(2)}%` : '0%';
+      }
+      yield put({
+        type: 'save',
+        payload: {
+          result,
+          loading,
+          progressPercent: tbdataLen ? Number((100*resultLen/tbdataLen).toFixed(2)) : 0,
+          createPercent
+        }
+      });
+      if (!loading) {
+        message.success('检测结束', 3);
+      }
+    },
     *closeWebSocket({ payload }, { call, put, select }) {
-      ws.close();
+      yield ws.close();
     },
   },
 
@@ -527,62 +611,146 @@ export default {
 
 };
 
-
-
-.normal {
-  font-family: Georgia, sans-serif;
-  padding: 8px 32px 0;
-  text-align: center;
-}
-
-.title {
-  font-size: 2.5rem;
-  font-weight: normal;
-  letter-spacing: -1px;
-  margin-bottom: 8px;
-}
-
-.actionRow {
-  text-align: left;
-  margin: 8px 0;
-  font-family: sans-serif;
-}
-
-.actionRow button+button {
-  margin-left: 16px;
-}
-
 .actionCol {
-  max-width: 192px;
+  max-width: 208px;
 }
 
-.totalText {
-  padding-right: 32px;
+export default {
+  MAX_QUERY: 34, // 每次检测的最大字数
+  FS_FMAX: 2, // 采样频率，默认为1/2
+  EFF_MIN_LEN: 5, // 检测的最小有效长度
 }
 
-.progressCol {
-  padding-left: 32px;
-}
 
-.progressCol>span {
-  position: relative;
-  top: 7px;
-}
+from websocket_server import WebsocketServer
+import requests
+import json
+import time
+from bs4 import BeautifulSoup
 
-.progressCol>div {
-  width: 60%;
-  top: 5px;
-  margin-right: 32px;
-}
+# Called for every client connecting (after handshake)
+def new_client(client, server):
+    print("New client connected and was given id %d" % client['id'])
+    # server.send_message_to_all("Hey all, a new client has joined us")
 
-  <title>Novel Duplication</title>
-  <link rel="stylesheet" href="index.css" />
-  <style>
-    .ant-table-thead .ant-table-column-sorter {
-      top: -4px;
-    }
-    .ant-table-tbody .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
-      padding-top: 8px!important;
-      padding-bottom: 8px!important;
-    }
-  </style>
+
+# Called for every client disconnecting
+def client_left(client, server):
+    print("Client(%d) disconnected" % client['id'])
+
+
+# your spider code
+def getHtml(keyword):
+    # ....
+    retry_count = 5
+    # proxy = get_proxy()
+    while retry_count > 0:
+        try:
+            # 使用代理访问
+            res = requests.get('https://www.so.com/s?q={}'.format(keyword))
+            soup = BeautifulSoup(res.text[:], 'html.parser')
+            res_list = soup.body.find_all('li', 'res-list')
+            em_list = [[len(y.get_text()) for y in x.find_all('em')] for x in res_list]
+            # em_list = []
+            # for x in res_list:
+            #   # 取出所有em元素
+            #   res_em = x.find_all('em')
+            #   text_list = []
+            #   for y in res_em:
+            #     # 取出em元素的文本，并计算文本的长度
+            #     text_list.append(len(y.get_text()))
+            #   em_list.append(text_list)
+            # # [[3, 5, 12], [1, 2]]
+            print(em_list)
+            return em_list
+        except Exception:
+            retry_count -= 1
+    # 出错5次, 删除代理池中代理
+    # delete_proxy(proxy)
+    return [[]]
+
+
+# Called when a client sends a message
+def message_received(client, server, message):
+    msg = [{ 'keyword': x } for x in json.loads(message)]
+    for x in msg:
+        redlist = getHtml(x['keyword'])
+        x['redlist'] = redlist
+        server.send_message(client, json.dumps(x))
+        time.sleep(2)
+    print("Client(%d) said: %s" % (client['id'], msg))
+
+
+PORT=9001
+server = WebsocketServer(PORT)
+server.set_fn_new_client(new_client)
+server.set_fn_client_left(client_left)
+server.set_fn_message_received(message_received)
+server.run_forever()
+
+
+import requests
+from scylla.websocket import WebsocketServer
+from bs4 import BeautifulSoup
+
+# Called for every client connecting (after handshake)
+def new_client(client, server):
+	print("New client connected and was given id %d" % client['id'])
+	# server.send_message_to_all("Hey all, a new client has joined us")
+
+
+# Called for every client disconnecting
+def client_left(client, server):
+	print("Client(%d) disconnected" % client['id'])
+
+
+# your spider code
+def getHtml(kw):
+    # ....
+    retry_count = 5
+    # proxy = get_proxy()
+    while retry_count > 0:
+        try:
+            # 使用代理访问
+            res = requests.get('https://www.so.com/s?q={}'.format(kw), proxies={'http': 'http://127.0.0.1:8081'})
+            soup = BeautifulSoup(res.text[:], 'html.parser')
+            res_list = soup.body.find_all('li', 'res-list')
+            em_list = [[len(y.get_text()) for y in x.find_all('em')] for x in res_list]
+            # em_list = []
+            # for x in res_list:
+            #   # 取出所有em元素
+            #   res_em = x.find_all('em')
+            #   text_list = []
+            #   for y in res_em:
+            #     # 取出em元素的文本，并计算文本的长度
+            #     text_list.append(len(y.get_text()))
+            #   em_list.append(text_list)
+            # # [[3, 5, 12], [1, 2]]
+            print(em_list)
+            return em_list
+        except Exception:
+            retry_count -= 1
+    # 出错5次, 删除代理池中代理
+    # delete_proxy(proxy)
+    return [[]]
+
+
+# Called when a client sends a message
+def message_received(client, server, message):
+    msg = [{ 'keyword': x } for x in json.loads(message)]
+    for x in msg:
+        redlist = getHtml(x['keyword'])
+        x['redlist'] = redlist
+        server.send_message(client, json.dumps(x))
+        time.sleep(2)
+    # print("Client(%d) said: %s" % (client['id'], msg))
+
+
+PORT=9001
+server = WebsocketServer(PORT)
+server.set_fn_new_client(new_client)
+server.set_fn_client_left(client_left)
+server.set_fn_message_received(message_received)
+
+def start_websocket():
+    server.run_forever()
