@@ -97,6 +97,11 @@ class ProxyManager(object):
         total_useful_queue = self.db.getNumber()
         return {'raw_proxy': total_raw_proxy, 'useful_proxy': total_useful_queue}
 
+    def getUsefulNumber(self):
+        self.db.changeTable(self.useful_proxy_queue)
+        total_useful_queue = self.db.getNumber()
+        return str(total_useful_queue)
+
 if __name__ == '__main__':
     pp = ProxyManager()
     pp.refresh()

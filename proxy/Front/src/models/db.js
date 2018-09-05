@@ -1,7 +1,7 @@
 
 import { message, notification } from 'antd';
 import constants from '../utils/constants';
-import ReconnectingWebSocket from '../utils/ReconnectingWebSocket';
+// import ReconnectingWebSocket from '../utils/ReconnectingWebSocket';
 import TimeCounter from '../utils/TimeCounter';
 import moment from 'moment';
 
@@ -36,7 +36,7 @@ function init(dispatch, callback) {
       message: '与服务连接断开或服务出错',
       description: '请打开新的页面进行检测（提示：可以查看结果表格最后一页最后一条记录，看检测到哪段文本了，然后再复制粘贴剩下的去新页面查。原页面不再可用，看完详情就可以关闭）...',
     });
-    output("服务关闭了");
+    output("服务断开了");
   };
   ws.onerror = function(e) {
     output("服务出错了");
@@ -71,7 +71,8 @@ export default {
     progressPercent: 0,
     createPercent: '待检测',
     startTime: '无',
-    times: '00:00:00'
+    times: '00:00:00',
+    usefulProxyNum: ''
   },
 
   subscriptions: {
@@ -164,7 +165,7 @@ export default {
     *receivedMsg({ payload: { data, dispatch } }, { call, put, select }) {
       const { result, tbdata } = yield select(state => state.db);
       // 如果收到IP被封禁消息,提示用户，五分钟后检测ws链接状态，如果已断开，就重连
-      if (data === '"block_detected"') {
+      if (data === '"WAIT"') {
           notification.error({
             duration: null,
             message: 'IP被封禁通知',
@@ -176,8 +177,19 @@ export default {
           //   }
           // }, 300000)
           return;
-      } else if (data === 'keep_alive') {
+      } else if (data === '"KEEP"') {
+        console.warn('WebSocket Connection：ip被封禁期间，保持与服务的连接')
         // 保持通信连接，什么也不做
+        return;
+      } else if (data && data[1] === 'U' && data[data.length-2] === 'U') {
+        // 返回有效代理IP数量
+        const usefulProxyNum = data.slice(2, data.length-2);
+        yield put({
+          type: 'save',
+          payload: {
+            usefulProxyNum
+          }
+        });
         return;
       }
       let msg = {};

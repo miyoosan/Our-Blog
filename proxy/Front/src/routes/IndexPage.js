@@ -2,120 +2,9 @@ import React from 'react';
 import { connect } from 'dva';
 import { Input, Button, Row, Col, Table, Progress, Tooltip, Icon, message } from 'antd';
 import styles from './IndexPage.css';
+import Clipboard from '../utils/Clipboard';
 
-
-const defaultMessage = 'Copy to clipboard: #{key}, Enter';
-
-function deselectCurrent () {
-  var selection = document.getSelection();
-  if (!selection.rangeCount) {
-    return function () {};
-  }
-  var active = document.activeElement;
-
-  var ranges = [];
-  for (var i = 0; i < selection.rangeCount; i++) {
-    ranges.push(selection.getRangeAt(i));
-  }
-
-  switch (active.tagName.toUpperCase()) { // .toUpperCase handles XHTML
-    case 'INPUT':
-    case 'TEXTAREA':
-      active.blur();
-      break;
-
-    default:
-      active = null;
-      break;
-  }
-
-  selection.removeAllRanges();
-  return function () {
-    selection.type === 'Caret' &&
-    selection.removeAllRanges();
-
-    if (!selection.rangeCount) {
-      ranges.forEach(function(range) {
-        selection.addRange(range);
-      });
-    }
-
-    active &&
-    active.focus();
-  };
-};
-
-function format(message) {
-  var copyKey = (/mac os x/i.test(navigator.userAgent) ? '⌘' : 'Ctrl') + '+C';
-  return message.replace(/#{\s*key\s*}/g, copyKey);
-}
-
-function copy(text, options) {
-  var debug, message, reselectPrevious, range, selection, mark, success = false;
-  if (!options) { options = {}; }
-  debug = options.debug || false;
-  try {
-    reselectPrevious = deselectCurrent();
-
-    range = document.createRange();
-    selection = document.getSelection();
-
-    mark = document.createElement('span');
-    mark.textContent = text;
-    // reset user styles for span element
-    mark.style.all = 'unset';
-    // prevents scrolling to the end of the page
-    mark.style.position = 'fixed';
-    mark.style.top = 0;
-    mark.style.clip = 'rect(0, 0, 0, 0)';
-    // used to preserve spaces and line breaks
-    mark.style.whiteSpace = 'pre';
-    // do not inherit user-select (it may be `none`)
-    mark.style.webkitUserSelect = 'text';
-    mark.style.MozUserSelect = 'text';
-    mark.style.msUserSelect = 'text';
-    mark.style.userSelect = 'text';
-
-    document.body.appendChild(mark);
-
-    range.selectNode(mark);
-    selection.addRange(range);
-
-    var successful = document.execCommand('copy');
-    if (!successful) {
-      throw new Error('copy command was unsuccessful');
-    }
-    success = true;
-  } catch (err) {
-    debug && console.error('unable to copy using execCommand: ', err);
-    debug && console.warn('trying IE specific stuff');
-    try {
-      window.clipboardData.setData('text', text);
-      success = true;
-    } catch (err) {
-      debug && console.error('unable to copy using clipboardData: ', err);
-      debug && console.error('falling back to prompt');
-      message = format('message' in options ? options.message : defaultMessage);
-      window.prompt(message, text);
-    }
-  } finally {
-    if (selection) {
-      if (typeof selection.removeRange == 'function') {
-        selection.removeRange(range);
-      } else {
-        selection.removeAllRanges();
-      }
-    }
-
-    if (mark) {
-      document.body.removeChild(mark);
-    }
-    reselectPrevious();
-  }
-
-  return success;
-}
-
+const clipboard = new Clipboard();
 
 function checkTxt(e, dispatch) {
   // 去除空格和回车换行符
@@ -135,6 +24,10 @@ const columns = [{
   render: (text, record) => {
     return <span style={{ color: record.error ? 'red' : 'rgba(0, 0, 0, 0.65)' }}>{text}</span>
   }
+}, {
+  title: '代理IP',
+  dataIndex: 'proxy',
+  width: '200px'
 }, {
   title: '飘红',
   dataIndex: 'redshot',
@@ -168,7 +61,7 @@ function clearChecktext(e, dispatch) {
 }
 
 function IndexPage({ dispatch, history, location, match, staticContext, ...state }) {
-  const { text, inputText, result, createPercent, tbdata, progressPercent, loading, startTime } = state;
+  const { text, inputText, result, createPercent, tbdata, progressPercent, loading, startTime, usefulProxyNum } = state;
   let copytext = inputText;
   if (result.length > 1 && result.length !== tbdata.length) {
     const lastCheckedText = result[result.length-1].keyword;
@@ -199,10 +92,10 @@ function IndexPage({ dispatch, history, location, match, staticContext, ...state
           />
           <span className={styles.totalText}>总字数：{text.length}字</span>
           <span>360原创度：{createPercent}</span>
-          <span style={{ padding: '0 16px' }}><a href="/" target="_blank" rel="noopener noreferrer">打开新页面</a></span>
+          <span style={{ padding: '0 16px 0 32px' }}><a href="/" target="_blank" rel="noopener noreferrer">打开新页面</a></span>
           <span><Tooltip title="复制未检测到的文本">
             <a onClick={(e=> {
-                if(copy(copytext)) {
+                if(clipboard.copy(copytext)) {
                   message.success('复制成功');
                 }
                 e.stopPropagation();
@@ -210,6 +103,11 @@ function IndexPage({ dispatch, history, location, match, staticContext, ...state
               复制<Icon type="copy" />
             </a>
           </Tooltip>
+          </span>
+          <span style={{ paddingLeft: '16px' }}>
+            <a href="http://127.0.0.1:5010/get_all" target="_blank" rel="noopener noreferrer" title="代理IP列表">
+              有效代理IP：{usefulProxyNum || 0}个
+            </a>
           </span>
         </Col>
       </Row>
