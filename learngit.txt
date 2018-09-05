@@ -1,3 +1,265 @@
+[DB]
+;Configure the database information
+;type: SSDB/REDIS/MONGODB if use redis, only modify the host port，the type should be SSDB
+type = MONGODB
+host = 127.0.0.1
+port = 27017
+;port = 8888
+name = proxy
+
+[ProxyGetter]
+;register the proxy getter function
+freeProxyFirst  = 1
+freeProxySecond = 1
+;freeProxyThird  = 1
+freeProxyFourth = 1
+freeProxyFifth  = 1
+freeProxySixth = 1
+freeProxySeventh = 1
+freeProxyEight = 1
+freeProxyNinth = 1
+freeProxyTen = 1
+freeProxyEleven = 1
+freeProxyTwelve = 1
+;foreign website, outside the wall
+;freeProxyWallFirst = 1
+;freeProxyWallSecond = 1
+;freeProxyWallThird = 1
+
+[HOST]
+; API接口配置 http://127.0.0.1:5010
+ip = 0.0.0.0
+port = 5010
+
+APScheduler==3.2.0
+werkzeug==0.11.15
+Flask==0.12
+requests==2.12.4
+lxml==4.2.2
+bs4
+pymongo
+redis
+
+
+from WebSocket.WebsocketServer import WebsocketServer
+import requests
+import json
+import time
+from bs4 import BeautifulSoup
+from Manager.ProxyManager import ProxyManager
+from flask import jsonify
+
+def get_proxy():
+    proxy = ProxyManager().get()
+    return proxy if proxy else None
+
+def delete_proxy(proxy):
+    ProxyManager().delete(proxy)
+
+
+# Called for every client connecting (after handshake)
+def new_client(client, server):
+    print("New client connected and was given id %d" % client['id'])
+    # server.send_message_to_all("Hey all, a new client has joined us")
+
+
+# Called for every client disconnecting
+def client_left(client, server):
+    print("Client(%d) disconnected" % client['id'])
+
+
+# your spider code
+def getHtml(keyword):
+    # ....
+    retry_count = 5
+    proxy = get_proxy()
+    print('proxy============{}'.format(proxy))
+    while retry_count > 0:
+        try:
+            # 使用代理访问
+            res = requests.get('https://www.so.com/s?q={}'.format(keyword), proxies={'http': 'http://{}'.format(proxy)})
+            print('res==========={}'.format(res))
+            soup = BeautifulSoup(res.text[:], 'html.parser')
+            res_list = soup.body.find_all('li', 'res-list')
+            em_list = [[len(y.get_text()) for y in x.find_all('em')] for x in res_list]
+            # # [[3, 5, 12], [1, 2]]
+            print(em_list)
+            return em_list
+        except Exception:
+            retry_count -= 1
+    # 出错5次, 删除代理池中代理
+    delete_proxy(proxy)
+    return [[]]
+
+
+# Called when a client sends a message
+def message_received(client, server, message):
+    msg = [{ 'keyword': x } for x in json.loads(message, encoding='utf-8-sig')]
+    for x in msg:
+        redlist = getHtml(x['keyword'])
+        x['redlist'] = redlist
+        server.send_message(client, json.dumps(x))
+        time.sleep(0.1)
+    print("Client(%d) said: %s" % (client['id'], msg))
+
+
+def run():
+    PORT=9001
+    server = WebsocketServer(PORT)
+    server.set_fn_new_client(new_client)
+    server.set_fn_client_left(client_left)
+    server.set_fn_message_received(message_received)
+    server.run_forever()
+
+if __name__ == 'main':
+    run()
+
+
+# -*- coding: utf-8 -*-
+"""
+-------------------------------------------------
+   File Name：     main.py  
+   Description :  运行主函数
+   Author :       JHao
+   date：          2017/4/1
+-------------------------------------------------
+   Change Activity:
+                   2017/4/1: 
+-------------------------------------------------
+"""
+__author__ = 'JHao'
+
+import sys
+from multiprocessing import Process
+
+sys.path.append('../')
+
+from Api.ProxyApi import run as ProxyApiRun
+from Schedule.ProxyValidSchedule import run as ValidRun
+from Schedule.ProxyRefreshSchedule import run as RefreshRun
+from WebSocket.Spider import run as SpiderRun
+
+def run():
+    p_list = list()
+    p1 = Process(target=ProxyApiRun, name='ProxyApiRun')
+    p_list.append(p1)
+    p2 = Process(target=ValidRun, name='ValidRun')
+    p_list.append(p2)
+    p3 = Process(target=RefreshRun, name='RefreshRun')
+    p_list.append(p3)
+    p4 = Process(target=SpiderRun, name='SpiderRun')
+    p_list.append(p4)
+
+    for p in p_list:
+        p.daemon = True
+        p.start()
+    for p in p_list:
+        p.join()
+
+
+if __name__ == '__main__':
+    run()
+
+
+# -*- coding: utf-8 -*-
+# !/usr/bin/env python
+"""
+-------------------------------------------------
+   File Name：     ProxyApi.py  
+   Description :  
+   Author :       JHao
+   date：          2016/12/4
+-------------------------------------------------
+   Change Activity:
+                   2016/12/4: 
+-------------------------------------------------
+"""
+__author__ = 'JHao'
+
+import sys
+import json
+from flask import Flask, jsonify, request, render_template, Response
+
+sys.path.append('../')
+
+from Util.GetConfig import GetConfig
+from Manager.ProxyManager import ProxyManager
+
+app = Flask(__name__)
+
+
+class JsonResponse(Response):
+
+    @classmethod
+    def force_type(cls, response, environ=None):
+        if isinstance(response, (dict, list)):
+            response = jsonify(response)
+
+        return super(JsonResponse, cls).force_type(response, environ)
+
+
+app.response_class = JsonResponse
+
+api_list = {
+    'get': u'get an usable proxy',
+    # 'refresh': u'refresh proxy pool',
+    'get_all': u'get all proxy from proxy pool',
+    'delete?proxy=127.0.0.1:5010': u'delete an unable proxy',
+    'get_status': u'proxy statistics',
+    'lists': {
+        'a': 'aa',
+        'b': 'bb'
+    }
+}
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/get/')
+def get():
+    proxy = ProxyManager().get()
+    return proxy if proxy else 'no proxy!'
+
+
+@app.route('/refresh/')
+def refresh():
+    # TODO refresh会有守护程序定时执行，由api直接调用性能较差，暂不使用
+    # ProxyManager().refresh()
+    pass
+    return 'success'
+
+
+@app.route('/get_all/')
+def getAll():
+    proxies = ProxyManager().getAll()
+    return proxies
+
+
+@app.route('/delete/', methods=['GET'])
+def delete():
+    proxy = request.args.get('proxy')
+    ProxyManager().delete(proxy)
+    return 'success'
+
+
+@app.route('/get_status/')
+def getStatus():
+    status = ProxyManager().getNumber()
+    return status
+
+
+def run():
+    config = GetConfig()
+    app.run(host=config.host_ip, port=config.host_port)
+
+
+if __name__ == '__main__':
+    # app.debug = True
+    run()
+
+
 《笔记——学习git命令》
 
  安装git之后...
