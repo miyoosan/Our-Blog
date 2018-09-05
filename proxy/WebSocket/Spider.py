@@ -63,9 +63,11 @@ def message_received(client, server, message):
         msg = { 'keyword': json.loads(message, encoding='utf-8-sig') }
         redlist = getHtml(msg['keyword'])
         server.res_counter += 1
+        listlen = len(redlist)
+        server.res_empty_counter += str(listlen)
         # 如果检测到IP被封禁，休眠五分钟零2秒，并通知页面，显示被封禁的提示
-        if len(redlist) == 0:
-            if server.res_counter >= 590:
+        if listlen == 0:
+            if server.res_counter >= 590 or '00000' in server.res_empty_counter:
                 server.send_message(client, json.dumps('block_detected'))
                 print('检测到IP被封禁，暂停五分钟')
                 count = 10
@@ -75,6 +77,7 @@ def message_received(client, server, message):
                     # 每隔30秒与页面通信，保持链接
                     server.send_message(client, json.dumps('keep_alive'))
                 server.res_counter = 0
+                server.res_empty_counter = ''
         msg['redlist'] = redlist
         server.send_message(client, json.dumps(msg))
         # server.send_message(client, json.dumps('block_detected'))
@@ -88,6 +91,7 @@ def run():
     PORT=9001
     server = WebsocketServer(PORT)
     server.res_counter = 0
+    server.res_empty_counter = ''
     server.set_fn_new_client(new_client)
     server.set_fn_client_left(client_left)
     server.set_fn_message_received(message_received)
