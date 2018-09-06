@@ -17,6 +17,8 @@ const CLOSE_STATUS = 3;
 
 var WebscoketStatus = INI_STATUS;
 
+var ExceptionStatus = INI_STATUS;
+
 function init({ dispatch, sendMsg }) {
   // Connect to Web Socket
   ws = new WebSocket("ws://localhost:9001/");
@@ -29,13 +31,18 @@ function init({ dispatch, sendMsg }) {
 
   ws.onmessage = function (e) {
     // e.data contains received string.
-    e.data && dispatch({
-      type: 'receivedMsg',
-      payload: {
-        data: e.data,
-        dispatch
+    if (e.data) {
+      if (e.data === '"WAIT"') {
+        ExceptionStatus = ERROR_STATUS;
       }
-    })
+      dispatch({
+        type: 'receivedMsg',
+        payload: {
+          data: e.data,
+          dispatch
+        }
+      })
+    }
   };
 
   ws.onclose = function () {
@@ -44,6 +51,10 @@ function init({ dispatch, sendMsg }) {
       dispatch({
         type: 'processException'
       })
+      if (ExceptionStatus === ERROR_STATUS) {
+        // 中断时已经通知过了，不再通知
+        return;
+      }
       return notification.error({
         duration: null,
         message: '与服务连接断开或服务出错',
@@ -192,18 +203,18 @@ export default {
         notification.error({
           duration: 600,
           message: '服务中断通知',
-          description: '检测到要人工输入验证码或IP被封禁，停止查重。请打开360搜索进行验证，验证后，请开新页面进行查重。如果查重立即又被封，请十分钟后再开新页面进行查重。否则继续到360搜索去验证...',
+          description: <span>检测到要人工输入验证码或IP被封禁，停止查重。请打开360搜索进行验证，验证后，请开新页面进行查重。如果查重立即又被封，请十分钟后再开新页面进行查重。否则继续到360搜索去验证...<a href="https://www.so.com/s?q=s" target="_blank" rel="noopener noreferrer">点击我打开360搜索</a></span>,
         });
         yield put({
           type: 'processException'
         })
-        setTimeout(() => {
-          notification.error({
-            duration: null,
-            message: '十分钟已过',
-            description: '现在可以在新页面进行检测了，或者，刷新本页面进行检测...',
-          });
-        }, 600000)
+        // setTimeout(() => {
+        //   notification.error({
+        //     duration: null,
+        //     message: '十分钟已过',
+        //     description: '现在可以在新页面进行检测了，或者，刷新本页面进行检测...',
+        //   });
+        // }, 600000)
         return;
       } else if (data === '"KEEP"') {
         console.warn('WebSocket Connection：保持与服务的连接')

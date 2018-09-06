@@ -93,6 +93,7 @@ function IndexPage({ dispatch, history, location, match, staticContext, ...state
           <Progress
             percent={progressPercent}
             status={progressPercent === 100 ? 'success' : 'active'}
+            strokeColor={progressPercent === 100 ? '#52c41a' : hasException ? '#f5222d' : '#1890ff'}
             strokeWidth={18}
           />
           <span className={styles.totalText}>已测/总字数：{Math.round(progressPercent*text.length/100)}/{text.length}字</span>

@@ -111,6 +111,7 @@ def message_received(client, server, message):
                 server.send_message(client, json.dumps('WAIT'))
                 print('检测到IP被封禁，停止查重')
                 server.res_empty_counter = ''
+                time.sleep(1)
                 raise Exception('检测到IP被封禁，停止查重')
         msg['redlist'] = redlist
         msg['proxy'] = proxy_ip
@@ -118,7 +119,7 @@ def message_received(client, server, message):
     except Exception as e:
         print('检测服务出现错误，请另开页面进行检测')
         server._client_left_(client)
-        time.sleep(6000)
+        time.sleep(60000)
 
 
 
