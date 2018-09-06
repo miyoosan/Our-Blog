@@ -34,7 +34,7 @@ def run():
     p_list.append(p4)
 
     for p in p_list:
-        p.daemon = True
+        # p.daemon = True
         p.start()
     for p in p_list:
         p.join()

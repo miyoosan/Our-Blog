@@ -16,7 +16,6 @@ import requests
 import random
 import time
 
-
 class WebRequest(object):
     def __init__(self, *args, **kwargs):
         pass
@@ -84,3 +83,4 @@ class WebRequest(object):
                 if retry_time <= 0:
                     return
                 time.sleep(retry_interval)
+

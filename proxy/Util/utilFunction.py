@@ -66,7 +66,6 @@ def getHtmlTree(url, **kwargs):
     html = wr.get(url=url, header=header).content
     return etree.HTML(html)
 
-
 def tcpConnect(proxy):
     """
     TCP 三次握手

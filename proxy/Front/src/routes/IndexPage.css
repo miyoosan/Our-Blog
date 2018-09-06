@@ -1,7 +1,7 @@
 
 .normal {
   font-family: Georgia, sans-serif;
-  padding: 8px 32px 0;
+  padding: 8px 16px 0;
   text-align: center;
 }
 
@@ -27,11 +27,11 @@
 }
 
 .totalText {
-  padding-right: 32px;
+  padding-right: 16px;
 }
 
 .progressCol {
-  padding-left: 32px;
+  padding-left: 16px;
 }
 
 .progressCol>span {
@@ -40,9 +40,9 @@
 }
 
 .progressCol>div {
-  width: 30%;
+  width: 20%;
   top: 5px;
-  margin-right: 32px;
+  margin-right: 24px;
 }
 
 .times {

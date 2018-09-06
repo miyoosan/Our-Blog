@@ -60,13 +60,18 @@ function clearChecktext(e, dispatch) {
   })
 }
 
-function IndexPage({ dispatch, history, location, match, staticContext, ...state }) {
-  const { text, inputText, result, createPercent, tbdata, progressPercent, loading, startTime, usefulProxyNum } = state;
+function getCopyText(state) {
+  const { text, inputText, result, tbdata } = state;
   let copytext = inputText;
   if (result.length > 1 && result.length !== tbdata.length) {
     const lastCheckedText = result[result.length-1].keyword;
     copytext = text.slice(text.indexOf(lastCheckedText)+lastCheckedText.length,text.length);
   }
+  return copytext;
+}
+
+function IndexPage({ dispatch, history, location, match, staticContext, ...state }) {
+  const { text, inputText, result, createPercent, progressPercent, loading, startTime, usefulProxyNum, hasException } = state;
   return (
     <div className={styles.normal}>
       <h1 className={styles.title}>Novel Duplication</h1>
@@ -78,24 +83,24 @@ function IndexPage({ dispatch, history, location, match, staticContext, ...state
       />
       <Row className={styles.actionRow}>
         <Col span={4} className={styles.actionCol}>
-          <Button onClick={e => checkDuplicate(e, dispatch)} loading={loading} type="primary">{loading ? '检测中' : '开始检测'}</Button>
+          <Button onClick={e => checkDuplicate(e, dispatch)} disabled={hasException} loading={loading} type="primary">{hasException ? '无法检测' : loading ? '检测中' : '开始检测'}</Button>
           <Button onClick={e => clearChecktext(e, dispatch)}>清空文本</Button>
         </Col>
         <Col span={20} className={styles.progressCol}>
-          <span>开始时间：{startTime}</span>
-          <span className={styles.times}>检测耗时：<span id="times">00:00:00</span></span>
-          <span>检测进度：</span>
+          <span>检测时刻：{startTime}</span>
+          <span className={styles.times}>耗时：<span id="times">00:00:00</span></span>
+          <span>进度：</span>
           <Progress
             percent={progressPercent}
             status={progressPercent === 100 ? 'success' : 'active'}
             strokeWidth={18}
           />
-          <span className={styles.totalText}>总字数：{text.length}字</span>
+          <span className={styles.totalText}>已测/总字数：{Math.round(progressPercent*text.length/100)}/{text.length}字</span>
           <span>360原创度：{createPercent}</span>
-          <span style={{ padding: '0 16px 0 32px' }}><a href="/" target="_blank" rel="noopener noreferrer">打开新页面</a></span>
+          <span style={{ padding: '0 16px 0 32px' }}><a href="/" target="_blank" rel="noopener noreferrer">新页面</a></span>
           <span><Tooltip title="复制未检测到的文本">
             <a onClick={(e=> {
-                if(clipboard.copy(copytext)) {
+                if(clipboard.copy(getCopyText(state))) {
                   message.success('复制成功');
                 }
                 e.stopPropagation();
@@ -104,11 +109,11 @@ function IndexPage({ dispatch, history, location, match, staticContext, ...state
             </a>
           </Tooltip>
           </span>
-          <span style={{ paddingLeft: '16px' }}>
+          {/* <span style={{ paddingLeft: '16px' }}>
             <a href="http://127.0.0.1:5010/get_all" target="_blank" rel="noopener noreferrer" title="代理IP列表">
-              有效代理IP：{usefulProxyNum || 0}个
+              代理IP：{usefulProxyNum || 0}
             </a>
-          </span>
+          </span> */}
         </Col>
       </Row>
       <Table
