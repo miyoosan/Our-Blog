@@ -1016,3 +1016,142 @@ server.set_fn_message_received(message_received)
 
 def start_websocket():
     server.run_forever()
+
+
+
+/**
+ * @param {number[][]} matrix
+ * @return {number}
+ */
+var longestIncreasingPath = function(matrix) {
+  const len = matrix.length - 1;
+  const nodes = [];
+  function getNode(curVal, relVal, x1, y1, x2, y2) {
+    let path = null;
+    let prevNode = null;
+    let nextNode = null;
+    const curNode = {
+      value: curVal,
+      x: x1,
+      y: y1
+    };
+    const relNode = {
+      value: relVal,
+      x: x2,
+      y: y2
+    };
+    if (curVal > relVal) {
+      path = `${relVal},${curVal}`;
+      prevNode = relNode;
+      nextNode = curNode;
+    } else if (curVal < relVal) {
+      path = `${curVal},${relVal}`;
+      prevNode = curNode;
+      nextNode = relNode;
+    }
+    return path
+      ? {
+          prevNode,
+          nextNode,
+          path
+        }
+      : null;
+  }
+  for (let x = 0; x <= len; x++) {
+    const yLen = matrix[x].length - 1;
+    for (let y = 0; y <= yLen; y++) {
+      const curVal = matrix[x][y];
+      if (x > 0) {
+        const x2 = x - 1;
+        const y2 = y;
+        const relVal = matrix[x2][y2];
+        const node = getNode(curVal, relVal, x, y, x2, y2);
+        if (node) {
+          nodes.push(node);
+        }
+      }
+      if (y < yLen) {
+        const x2 = x;
+        const y2 = y + 1;
+        const relVal = matrix[x2][y2];
+        const node = getNode(curVal, relVal, x, y, x2, y2);
+        if (node) {
+          nodes.push(node);
+        }
+      }
+    }
+  }
+  const [node, ...tempNodes] = nodes;
+  const pathsAll = [];
+  let current = node;
+  let currentRemainNodes = tempNodes;
+  while (true) {
+    let [paths, remainNodes] = travel(current, currentRemainNodes)
+    console.log('paths', paths)
+    paths.length && pathsAll.push(paths)
+    const [nextCurrent, ...nextRemainNodes] = remainNodes
+    current = nextCurrent
+    currentRemainNodes = nextRemainNodes
+    if (!currentRemainNodes.length) {
+      break
+    }
+  }
+  function travel(current, remainNodes) {
+    const paths = [];
+    for (let i = 0; i <= remainNodes.length - 1; i++) {
+      const target = remainNodes[i];
+      console.log('current', current, 'target',target)
+      if (
+        (current.prevNode.x - target.nextNode.x === 1 &&
+          current.prevNode.y === target.nextNode.y) ||
+        (current.prevNode.y - target.nextNode.y === 1 &&
+          current.prevNode.x === target.nextNode.x)
+      ) {
+        if (current.prevNode.value > target.nextNode.value) {
+          paths.push(`${target.path},${current.path}`);
+          target.isMark = true;
+          current = target
+        }
+      } else if (
+        (current.nextNode.x - target.prevNode.x === -1 &&
+          current.nextNode.y === target.prevNode.y) ||
+        (current.nextNode.y - target.prevNode.y === -1 &&
+          current.nextNode.x === target.prevNode.x)
+      ) {
+        if (current.nextNode.value < target.prevNode.value) {
+          paths.push(`${current.path},${target.path}`)
+          target.isMark = true;
+          current = target
+        }
+      } else if (
+        current.prevNode.y === target.nextNode.y &&
+        current.prevNode.x === target.nextNode.x
+      ) {
+        if (current.isMark) {
+          paths.push(`${target.prevNode.value}`)
+        } else {
+          paths.push(`${target.path},${current.nextNode.value}`)
+        }
+        target.isMark = true;
+        current = target
+      } else if (
+        current.nextNode.y === target.prevNode.y &&
+        current.nextNode.x === target.prevNode.x
+      ) {
+        if (current.isMark) {
+          paths.push(`${target.nextNode.value}`)
+        } else {
+          paths.push(`${current.path},${target.nextNode.value}`)
+        }
+        target.isMark = true;
+        current = target
+      }
+      
+      console.log('a', i, paths)
+    }
+    return [paths, remainNodes.filter(d => !d.isMark)]
+  }
+  return [nodes, pathsAll];
+};
+
+// 245,345导致的问题
